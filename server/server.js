@@ -36,11 +36,11 @@ io.on('connection', (socket) => {
         userClientsMap[userId] = [socket];
       }
     });
+    console.log(userClientsMap,'///////////////////')
   });
 
   // Handle chat messages
   socket.on('chat message', (message) => {
-    console.log(message,'mmmmmmmmmmmmmmmmmmmmmmmmmmmmm')
     const targetUserIds = Array.isArray(message.to.id) ? message.to.id : [message.to.id];
     const sourceUserId = message.from.id;
 

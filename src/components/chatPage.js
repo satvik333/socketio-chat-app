@@ -55,15 +55,21 @@ function ChatPage({ loggedInUser }) {
   };
 
   function selectUser(user) {
+    clearMessages();
     setToUser(user);
     socket.emit('join room', [user]);
   }
 
   function selectGroup(group) {
+    clearMessages();
     setToUser(group.members);
     setToGroupName(group.name)
     socket.emit('join room', group.members);
     console.log(toUser,'////////')
+  }
+
+  function clearMessages() {
+    setMessages([]);
   }
 
   return (
