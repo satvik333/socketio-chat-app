@@ -4,7 +4,6 @@ import { usersArray, usersGroup } from './userList';
 import { useNavigate } from 'react-router-dom';
 
 function ChatPage({ loggedInUser, socket }) {
-
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [fromUser, setFromUser] = useState(null);
@@ -12,13 +11,6 @@ function ChatPage({ loggedInUser, socket }) {
   const [toGroupName, setToGroupName] = useState(null);
   const messagesRef = useRef(null);
   const navigate = useNavigate();
-
-  socket.on('messageResponse', (msg) => {
-    setMessages((prevMessages) => {
-      return [...prevMessages, msg];
-    });
-    scrollToBottom();
-  });
 
   useEffect(() => {
     if (!loggedInUser) {
@@ -29,6 +21,21 @@ function ChatPage({ loggedInUser, socket }) {
   useEffect(() => {
     setFromUser(loggedInUser);
   }, [loggedInUser]);
+
+  useEffect(() => {
+    const handleReceivedMessage = (msg) => {
+      setMessages((prevMessages) => [...prevMessages, msg]);
+      scrollToBottom();
+    };
+
+    // Add the event listener
+    socket.on('messageResponse', handleReceivedMessage);
+
+    // Cleanup function to remove the event listener when the component unmounts
+    return () => {
+      socket.off('messageResponse', handleReceivedMessage);
+    };
+  }, [socket]);
 
   const scrollToBottom = () => {
     if (messagesRef.current) {
@@ -43,7 +50,7 @@ function ChatPage({ loggedInUser, socket }) {
         to: toUser,
         from: fromUser,
         message: inputMessage,
-        socketID: socket.id
+        socketID: socket.id,
       };
       socket.emit('chat message', userMessage);
       setInputMessage('');
@@ -59,6 +66,8 @@ function ChatPage({ loggedInUser, socket }) {
 
   function selectGroup(group) {
     clearMessages();
+    let isLoggedInUserPartOfGrp = group.members.find((member) => member.id === loggedInUser.id);
+    if (!isLoggedInUserPartOfGrp) group.members.push(loggedInUser);
     setToUser(group.members);
     setToGroupName(group.name);
     socket.emit('join room', group.members);
@@ -92,18 +101,19 @@ function ChatPage({ loggedInUser, socket }) {
         <h2>From: {fromUser?.name}</h2>
         <h2>To: {toUser?.name || toGroupName}</h2>
         <ul ref={messagesRef}>
-          {messages && messages.map((msg, index) => (
-            <li key={index} className={msg?.from?.email === loggedInUser.email ? 'right' : 'left'}>
-              <strong>{msg?.from?.email !== loggedInUser.email && msg?.from?.name}</strong> 
-              <br/>
-              {msg?.message}
-            </li>
-          ))}
+          {messages &&
+            messages.map((msg, index) => (
+              <li key={index} className={msg?.from?.email === loggedInUser.email ? 'right' : 'left'}>
+                <strong>{msg?.from?.email !== loggedInUser.email && msg?.from?.name}</strong>
+                <br />
+                {msg?.message}
+              </li>
+            ))}
         </ul>
         <form onSubmit={handleSendMessage}>
           <input
             type="text"
-            placeholder='Type here'
+            placeholder="Type here"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
           />
