@@ -14,7 +14,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route exact path="/" element={<LoginPage onLogin={handleLogin} />} />
+        <Route exact path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route exact path="/chat" element={<ChatPage loggedInUser={loggedInUser} />} />
       </Routes>
     </Router>

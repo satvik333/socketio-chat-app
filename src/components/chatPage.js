@@ -16,7 +16,6 @@ function ChatPage({ loggedInUser }) {
   const navigate = useNavigate();
 
   socket.on('messageResponse', (msg) => {
-    console.log(msg,'1111111111111111111111')
     setMessages((prevMessages) => {
       return [...prevMessages, msg];
     });
@@ -25,7 +24,7 @@ function ChatPage({ loggedInUser }) {
 
   useEffect(() => {
     if (!loggedInUser) {
-      navigate('/');
+      navigate('/login');
     }
   }, [loggedInUser]);
 
@@ -57,15 +56,16 @@ function ChatPage({ loggedInUser }) {
   function selectUser(user) {
     clearMessages();
     setToUser(user);
+    console.log(user,'one on one')
     socket.emit('join room', [user]);
   }
 
   function selectGroup(group) {
     clearMessages();
     setToUser(group.members);
-    setToGroupName(group.name)
+    setToGroupName(group.name);
+    console.log(group,'Group Chat')
     socket.emit('join room', group.members);
-    console.log(toUser,'////////')
   }
 
   function clearMessages() {
@@ -93,8 +93,8 @@ function ChatPage({ loggedInUser }) {
         </ul>
       </div>
       <div className="ChatPage">
-        <h2>From:{fromUser?.name}</h2>
-        <h2>To:{toUser?.name || toGroupName}</h2>
+        <h2>From: {fromUser?.name}</h2>
+        <h2>To: {toUser?.name || toGroupName}</h2>
         <ul ref={messagesRef}>
           {messages && messages.map((msg, index) => (
             <li key={index} className={msg?.from?.email === loggedInUser.email ? 'right' : 'left'}>

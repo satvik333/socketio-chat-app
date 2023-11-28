@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import './loginpage.css';
 import { usersArray } from './userList';
 import { useNavigate } from 'react-router-dom';
-import socketIO from 'socket.io-client';
 
 function LoginPage({ onLogin }) {
-  const socket = socketIO.connect('http://172.16.0.165:3001');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
@@ -28,7 +26,6 @@ function LoginPage({ onLogin }) {
     const loggedInUser = checkForTheUser();
     if (loggedInUser) {
       onLogin(loggedInUser);
-      socket.emit('join room', loggedInUser);
       navigate('/chat')
     }
   };

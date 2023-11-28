@@ -19,15 +19,16 @@ io.on('connection', (socket) => {
   // Handle user joining room
   socket.on('join room', (users) => {
     const joinedUsers = Array.isArray(users) ? users : [users];
-    
+
     joinedUsers.forEach((user) => {
       const userId = user.id;
 
-      // Ensure user_id is present
       if (!userId) return;
 
-      // Assign user_id to the socket
       socket.user_id = userId;
+
+      // Join a room based on user_id
+      socket.join(userId);
 
       // Add the socket to the user's list of sockets
       if (userClientsMap[userId]) {
@@ -36,7 +37,6 @@ io.on('connection', (socket) => {
         userClientsMap[userId] = [socket];
       }
     });
-    console.log(userClientsMap,'///////////////////')
   });
 
   // Handle chat messages
@@ -44,21 +44,38 @@ io.on('connection', (socket) => {
     const targetUserIds = Array.isArray(message.to.id) ? message.to.id : [message.to.id];
     const sourceUserId = message.from.id;
 
+    // Emit the message to the source user
+    if (sourceUserId && userClientsMap[sourceUserId]) {
+      userClientsMap[sourceUserId].forEach((clientSocket) => {
+        clientSocket.emit('messageResponse', message);
+      });
+    }
+
+    // Emit the message to each target user
     targetUserIds.forEach((targetUserId) => {
-      // Emit the message to all sockets of the target user
       if (targetUserId && userClientsMap[targetUserId]) {
         userClientsMap[targetUserId].forEach((clientSocket) => {
           clientSocket.emit('messageResponse', message);
         });
       }
     });
+  });
 
-    // Emit the message to all sockets of the source user
-    if (sourceUserId && userClientsMap[sourceUserId]) {
-      userClientsMap[sourceUserId].forEach((clientSocket) => {
-        clientSocket.emit('messageResponse', message);
-      });
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    const userId = socket.user_id;
+
+    if (userId && userClientsMap[userId]) {
+      // Remove the disconnected socket
+      userClientsMap[userId] = userClientsMap[userId].filter((clientSocket) => clientSocket !== socket);
+
+      // Remove the user entry if there are no more sockets
+      if (userClientsMap[userId].length === 0) {
+        delete userClientsMap[userId];
+      }
     }
+
+    console.log(userClientsMap, '///////////////////');
   });
 });
 
