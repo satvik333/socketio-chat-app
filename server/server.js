@@ -74,8 +74,6 @@ io.on('connection', (socket) => {
         delete userClientsMap[userId];
       }
     }
-
-    console.log(userClientsMap, '///////////////////');
   });
 });
 

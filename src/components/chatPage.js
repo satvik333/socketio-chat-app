@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import socketIO from 'socket.io-client';
 import './chatpage.css';
 import { usersArray, usersGroup } from './userList';
 import { useNavigate } from 'react-router-dom';
 
-function ChatPage({ loggedInUser }) {
+function ChatPage({ loggedInUser, socket }) {
 
-  const socket = socketIO.connect('http://172.16.0.165:3001');
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [fromUser, setFromUser] = useState(null);
@@ -56,7 +54,6 @@ function ChatPage({ loggedInUser }) {
   function selectUser(user) {
     clearMessages();
     setToUser(user);
-    console.log(user,'one on one')
     socket.emit('join room', [user]);
   }
 
@@ -64,7 +61,6 @@ function ChatPage({ loggedInUser }) {
     clearMessages();
     setToUser(group.members);
     setToGroupName(group.name);
-    console.log(group,'Group Chat')
     socket.emit('join room', group.members);
   }
 
