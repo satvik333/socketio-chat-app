@@ -16,9 +16,13 @@ const io = socketIO(server, {
 let userClientsMap = {};
 
 io.on('connection', (socket) => {
-  // Handle user joining room
   socket.on('join room', (users) => {
     const joinedUsers = Array.isArray(users) ? users : [users];
+
+    // Leave all existing rooms
+    socket.rooms.forEach((room) => {
+      socket.leave(room);
+    });
 
     joinedUsers.forEach((user) => {
       const userId = user.id;
@@ -27,10 +31,8 @@ io.on('connection', (socket) => {
 
       socket.user_id = userId;
 
-      // Join a room based on user_id
       socket.join(userId);
 
-      // Add the socket to the user's list of sockets
       if (userClientsMap[userId]) {
         userClientsMap[userId].push(socket);
       } else {
@@ -39,37 +41,32 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle chat messages
   socket.on('chat message', (message) => {
     const targetUserIds = Array.isArray(message.to.id) ? message.to.id : [message.to.id];
     const sourceUserId = message.from.id;
+    const roomId = message.roomId;
 
-    // Emit the message to the source user
     if (sourceUserId && userClientsMap[sourceUserId]) {
       userClientsMap[sourceUserId].forEach((clientSocket) => {
         clientSocket.emit('messageResponse', message);
       });
     }
 
-    // Emit the message to each target user
     targetUserIds.forEach((targetUserId) => {
       if (targetUserId && userClientsMap[targetUserId]) {
         userClientsMap[targetUserId].forEach((clientSocket) => {
-          clientSocket.emit('messageResponse', message);
+          clientSocket.to(roomId).emit('messageResponse', message);
         });
       }
     });
   });
 
-  // Handle disconnection
   socket.on('disconnect', () => {
     const userId = socket.user_id;
 
     if (userId && userClientsMap[userId]) {
-      // Remove the disconnected socket
       userClientsMap[userId] = userClientsMap[userId].filter((clientSocket) => clientSocket !== socket);
 
-      // Remove the user entry if there are no more sockets
       if (userClientsMap[userId].length === 0) {
         delete userClientsMap[userId];
       }

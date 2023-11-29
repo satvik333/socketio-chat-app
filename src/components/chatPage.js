@@ -46,12 +46,25 @@ function ChatPage({ loggedInUser, socket }) {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (inputMessage.trim() !== '') {
+      let target;
+      let roomId;
+
+      if (toUser) {
+        target = toUser;
+        roomId = toUser.id;
+      } else if (toGroupName) {
+        target = toUser.members;
+        roomId = toGroupName;
+      }
+
       let userMessage = {
-        to: toUser,
+        to: target,
         from: fromUser,
         message: inputMessage,
         socketID: socket.id,
+        roomId: roomId,
       };
+
       socket.emit('chat message', userMessage);
       setInputMessage('');
       scrollToBottom();
