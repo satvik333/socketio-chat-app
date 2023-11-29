@@ -9,6 +9,7 @@ function ChatPage({ loggedInUser, socket }) {
   const [fromUser, setFromUser] = useState(null);
   const [toUser, setToUser] = useState(null);
   const [toGroupName, setToGroupName] = useState(null);
+  const [groups, setGroups] = useState([]);
   const messagesRef = useRef(null);
   const navigate = useNavigate();
 
@@ -20,6 +21,13 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     setFromUser(loggedInUser);
+    setGroups((prevGroups) => {
+      const filteredGroups = usersGroup.filter((group) => {
+        const isUserInGroup = group.members.some((member) => Number(member.id) === Number(loggedInUser.id));
+        return isUserInGroup;
+      });
+      return filteredGroups;
+    });
   }, [loggedInUser]);
 
   useEffect(() => {
@@ -79,8 +87,6 @@ function ChatPage({ loggedInUser, socket }) {
 
   function selectGroup(group) {
     clearMessages();
-    let isLoggedInUserPartOfGrp = group.members.find((member) => member.id === loggedInUser.id);
-    if (!isLoggedInUserPartOfGrp) group.members.push(loggedInUser);
     setToUser(group.members);
     setToGroupName(group.name);
     socket.emit('join room', group.members);
@@ -103,7 +109,7 @@ function ChatPage({ loggedInUser, socket }) {
         </ul>
         <h1>Groups</h1>
         <ul>
-          {usersGroup.map((group, index) => (
+          {groups.map((group, index) => (
             <li key={index}>
               <strong onClick={() => selectGroup(group)}>{group.name}</strong>
             </li>
