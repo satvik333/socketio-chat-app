@@ -19,43 +19,58 @@ io.on('connection', (socket) => {
   socket.on('join room', (users) => {
     const joinedUsers = Array.isArray(users) ? users : [users];
 
+    joinedUsers.forEach((user) => {
+      const userId = user.id;
+
+      if (userClientsMap[userId]) {
+        delete userClientsMap[userId];
+      }
+    });
+  });
+
+  socket.on('chat message', (message) => {
+    Object.entries(userClientsMap).forEach(([userId, sockets]) => {
+      if (sockets.length > 1) {
+        sockets.pop();
+      }
+    });
+    
+    const targetUsers = Array.isArray(message.to) ? message.to : [message.to];
+    const sourceUserId = message.from.id;
+    const roomId = message.roomId;
+  
     // Leave all existing rooms
     socket.rooms.forEach((room) => {
       socket.leave(room);
     });
-
-    joinedUsers.forEach((user) => {
+  
+    targetUsers.forEach((user) => {
       const userId = user.id;
-
+  
       if (!userId) return;
-
+  
       socket.user_id = userId;
-
+  
       socket.join(userId);
-
+  
       if (userClientsMap[userId]) {
         userClientsMap[userId].push(socket);
       } else {
         userClientsMap[userId] = [socket];
       }
     });
-  });
-
-  socket.on('chat message', (message) => {
-    const targetUserIds = Array.isArray(message.to.id) ? message.to.id : [message.to.id];
-    const sourceUserId = message.from.id;
-    const roomId = message.roomId;
-
     if (sourceUserId && userClientsMap[sourceUserId]) {
       userClientsMap[sourceUserId].forEach((clientSocket) => {
         clientSocket.emit('messageResponse', message);
       });
     }
-
-    targetUserIds.forEach((targetUserId) => {
+  
+    targetUsers.forEach((targetUser) => {
+      const targetUserId = targetUser.id;
       if (targetUserId && userClientsMap[targetUserId]) {
         userClientsMap[targetUserId].forEach((clientSocket) => {
           clientSocket.to(roomId).emit('messageResponse', message);
+          if (userClientsMap[targetUserId].length > 1) userClientsMap[targetUserId].pop();
         });
       }
     });
