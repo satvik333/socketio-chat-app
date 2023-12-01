@@ -57,12 +57,12 @@ function ChatPage({ loggedInUser, socket }) {
       let target;
       let roomId;
 
-      if (toUser) {
+      if (toGroupName) {
+        target = toUser;
+        roomId = toGroupName;
+      } else {
         target = toUser;
         roomId = toUser.id;
-      } else if (toGroupName) {
-        target = toUser.members;
-        roomId = toGroupName;
       }
 
       let userMessage = {
@@ -82,6 +82,7 @@ function ChatPage({ loggedInUser, socket }) {
   function selectUser(user) {
     clearMessages();
     setToUser(user);
+    setToGroupName(null);
     socket.emit('join room', [user]);
   }
 
