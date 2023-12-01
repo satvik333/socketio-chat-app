@@ -55,15 +55,11 @@ function ChatPage({ loggedInUser, socket }) {
     e.preventDefault();
     if (inputMessage.trim() !== '') {
       let target;
-      let roomId;
   
       if (toGroupName) {
         target = toUser;
-        roomId = toGroupName;
       } else {
         target = toUser;
-        // Use a unique combination of user IDs as the room ID
-        roomId = [toUser.id, loggedInUser.id].sort().join('_');
       }
   
       let userMessage = {
@@ -71,7 +67,6 @@ function ChatPage({ loggedInUser, socket }) {
         from: fromUser,
         message: inputMessage,
         socketID: socket.id,
-        roomId: roomId,
       };
   
       socket.emit('chat message', userMessage);

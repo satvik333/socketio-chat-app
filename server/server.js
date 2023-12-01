@@ -17,54 +17,33 @@ let userClientsMap = {};
 
 io.on('connection', (socket) => {
   socket.on('chat message', (message) => {
-    Object.entries(userClientsMap).forEach(([userId, sockets]) => {
-      if (sockets.length > 1) {
-        sockets.pop();
-      }
-    });
-
     const targetUsers = Array.isArray(message.to) ? message.to : [message.to];
     const sourceUserId = message.from.id;
-    const roomId = message.roomId;
 
-    // Leave all existing rooms
-    socket.rooms.forEach((room) => {
-      socket.leave(room);
-    });
+    // Handle the source user separately
+    const sourceUser = targetUsers.find((user) => user.id === sourceUserId);
+    if (sourceUser) {
+      const sourceUserRoomId = [sourceUserId, sourceUserId].sort().join('_');
+      socket.user_id = sourceUserId;
+      socket.join(sourceUserRoomId);
+      console.log(sourceUserRoomId,'1111111111111111')
+      emitMessageToRoom(sourceUserId, sourceUserRoomId, message);
+    }
 
     targetUsers.forEach((user) => {
       const userId = user.id;
 
-      if (!userId) return;
+      if (!userId || userId === sourceUserId) return;
+
+      // Use a unique combination of user IDs as the room ID
+      const roomId = [userId, sourceUserId].sort().join('_');
 
       socket.user_id = userId;
 
-      socket.join(roomId); // Use the unique room ID here
-
-      if (userClientsMap[userId]) {
-        delete userClientsMap[userId];
-        userClientsMap[userId] = [{ socket, roomId }];
-      } else {
-        userClientsMap[userId] = [{ socket, roomId }];
-      }
-    });
-
-    if (sourceUserId && userClientsMap[sourceUserId]) {
-      userClientsMap[sourceUserId].forEach(({ socket: clientSocket }) => {
-        clientSocket.emit('messageResponse', message);
-      });
-    }
-
-    targetUsers.forEach((targetUser) => {
-      const targetUserId = targetUser.id;
-      if (targetUserId && userClientsMap[targetUserId]) {
-        userClientsMap[targetUserId].forEach(({ socket: clientSocket, roomId: clientRoomId }) => {
-          clientSocket.to(clientRoomId).emit('messageResponse', message);
-          if (userClientsMap[targetUserId].length > 1) {
-            userClientsMap[targetUserId].pop();
-          }
-        });
-      }
+      // Join the room
+      socket.join(roomId);
+      console.log(roomId,'2222222222222222222222222222')
+      emitMessageToRoom(userId, roomId, message);
     });
   });
 
@@ -72,13 +51,15 @@ io.on('connection', (socket) => {
     const userId = socket.user_id;
 
     if (userId && userClientsMap[userId]) {
-      userClientsMap[userId] = userClientsMap[userId].filter(({ socket: clientSocket }) => clientSocket !== socket);
-
-      if (userClientsMap[userId].length === 0) {
-        delete userClientsMap[userId];
-      }
+      socket.leave(userClientsMap[userId].roomId);
+      delete userClientsMap[userId];
     }
   });
+
+  function emitMessageToRoom(userId, roomId, message) {
+    io.to(roomId).emit('messageResponse', message);
+    userClientsMap[userId] = { socket, roomId };
+  }
 });
 
 const PORT = process.env.PORT || 3001;
