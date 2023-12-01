@@ -20,7 +20,8 @@ const usersGroup = [
       { id: 1, name: "Rajul Srivastava", email: "rajul.srivastava@kapturecrm.com" },
       { id: 2, name: "Aalesh Patil", email: "aalesh.patil@kapturecrm.com" },
       { id: 3, name: "Abhishek Thakur", email: "abhishek.thakur@kapturecrm.com" },
-      { id: 4, name: "Apoorv Sharma", email: "apoorv.sharma@kapturecrm.com" }
+      { id: 4, name: "Apoorv Sharma", email: "apoorv.sharma@kapturecrm.com" },
+      { id: 5, name: "Lavanya B", email: "lavanya.b@kapturecrm.com" },
     ]
   },
   {

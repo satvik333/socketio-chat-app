@@ -20,15 +20,6 @@ io.on('connection', (socket) => {
     const targetUsers = Array.isArray(message.to) ? message.to : [message.to];
     const sourceUserId = message.from.id;
 
-    // Handle the source user separately
-    const sourceUser = targetUsers.find((user) => user.id === sourceUserId);
-    if (sourceUser) {
-      const sourceUserRoomId = [sourceUserId, sourceUserId].sort().join('_');
-      socket.user_id = sourceUserId;
-      socket.join(sourceUserRoomId);
-      console.log(sourceUserRoomId,'1111111111111111')
-      emitMessageToRoom(sourceUserId, sourceUserRoomId, message);
-    }
 
     targetUsers.forEach((user) => {
       const userId = user.id;
@@ -42,7 +33,6 @@ io.on('connection', (socket) => {
 
       // Join the room
       socket.join(roomId);
-      console.log(roomId,'2222222222222222222222222222')
       emitMessageToRoom(userId, roomId, message);
     });
   });
