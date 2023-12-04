@@ -79,14 +79,12 @@ function ChatPage({ loggedInUser, socket }) {
     clearMessages();
     setToUser(user);
     setToGroupName(null);
-    socket.emit('join room', [user]);
   }
 
   function selectGroup(group) {
     clearMessages();
     setToUser(group.members);
     setToGroupName(group.name);
-    socket.emit('join room', group.members);
   }
 
   function clearMessages() {

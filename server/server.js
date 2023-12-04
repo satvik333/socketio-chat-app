@@ -47,8 +47,8 @@ io.on('connection', (socket) => {
   });
 
   function emitMessageToRoom(userId, roomId, message) {
-    io.to(roomId).emit('messageResponse', message);
     userClientsMap[userId] = { socket, roomId };
+    io.to(roomId).emit('messageResponse', message);
   }
 });
 
