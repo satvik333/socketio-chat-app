@@ -17,19 +17,16 @@ let userClientsMap = {};
 
 io.on('connection', (socket) => {
   socket.on('chat message', (message) => {
-    const targetUsers = Array.isArray(message.to) ? message.to : [message.to];
-    const sourceUserId = message.from.id;
-
+    let targetUsers = Array.isArray(message.to) ? message.to : [message.to];
+    let sourceUserId = message.from.id;
 
     targetUsers.forEach((user) => {
-      const userId = user.id;
+      let userId = user.id;
 
       if (!userId || userId === sourceUserId) return;
 
       // Use a unique combination of user IDs as the room ID
-      const roomId = [userId, sourceUserId].sort().join('_');
-
-      socket.user_id = userId;
+      let roomId = [userId, sourceUserId].sort().join('_');
 
       // Join the room
       socket.join(roomId);
@@ -38,17 +35,33 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    const userId = socket.user_id;
+    let userIds = socket.user_ids;
 
-    if (userId && userClientsMap[userId]) {
-      socket.leave(userClientsMap[userId].roomId);
-      delete userClientsMap[userId];
+    if (userIds && userIds.length > 0) {
+      userIds.forEach(userId => {
+        if (userId && userClientsMap[userId]) {
+          socket.leave(userClientsMap[userId].roomId);
+          delete userClientsMap[userId];
+        }
+      });
     }
   });
 
   function emitMessageToRoom(userId, roomId, message) {
-    userClientsMap[userId] = { socket, roomId };
-    io.to(roomId).emit('messageResponse', message);
+    // Check if users are in the map, and add them if not
+    socket.user_ids = socket.user_ids || [];
+    socket.user_ids.push(userId);
+    userClientsMap[userId] = userClientsMap[userId] || { socket, roomId };
+
+    // Check if source user is in the map, and add if not
+    if (!userClientsMap.hasOwnProperty(message.from.id)) {
+      socket.user_ids.push(message.from.id);
+      userClientsMap[message.from.id] = { socket, roomId };
+    }
+
+    console.log(roomId,'rrrrrrrrrrrrrrr', userClientsMap)
+
+    io.sockets.in(roomId).emit('messageResponse', message);
   }
 });
 
