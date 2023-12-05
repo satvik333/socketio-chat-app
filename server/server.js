@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
 
     console.log(roomId,'rrrrrrrrrrrrrrr', userClientsMap)
 
-    io.sockets.in(roomId).emit('messageResponse', message);
+    io.to(roomId).emit('messageResponse', message);
   }
 });
 
