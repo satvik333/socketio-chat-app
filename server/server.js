@@ -31,27 +31,20 @@ io.on('connection', (socket) => {
       // Join the room
       socket.join(roomId);
       emitMessageToIndividual(userId, roomId, message);
+    } else {
+      let groupId = message.groupName;
+
+      // Join the group room
+      socket.join(groupId);
+
+      socket.group_ids = socket.group_ids || [];
+      if (!socket.group_ids.includes(groupId)) socket.group_ids.push(groupId);
+      userClientsMap[groupId] = userClientsMap[groupId] || { sockets: [], roomId: groupId };
+
+      io.to(groupId).emit('messageResponse', message);
     }
-    else {
-      let roomId;
-      targetUsers.forEach((user) => {
-        let userId = user.id;
 
-        if (!userId || userId === sourceUserId) return;
-
-        // Use a unique combination of user IDs as the room ID
-        roomId = message.groupName;
-
-        // Join the room
-        socket.join(roomId);
-
-        socket.group_ids = socket.group_ids || [];
-        if (!socket.group_ids.includes(roomId)) socket.group_ids.push(roomId);
-        userClientsMap[roomId] = userClientsMap[roomId] || { socket, roomId };
-      });
-
-      io.to(roomId).emit('messageResponse', message);
-    }
+    console.log(userClientsMap, '11111111111111111111');
   });
 
   socket.on('disconnect', () => {
@@ -68,23 +61,28 @@ io.on('connection', (socket) => {
       socketIds.forEach(socketId => {
         if (socketId && userClientsMap[socketId]) {
           socket.leave(userClientsMap[socketId].roomId);
-          delete userClientsMap[socketId];
+
+          // Remove the disconnected socket from the room's sockets array
+          userClientsMap[socketId].sockets = userClientsMap[socketId].sockets.filter(s => s !== socket);
+
+          // If no more sockets in the room, remove the room entry from the map
+          if (userClientsMap[socketId].sockets.length === 0) {
+            delete userClientsMap[socketId];
+          }
         }
       });
     }
+    console.log(userClientsMap, '222222222222222222222222');
   }
 
   function emitMessageToIndividual(userId, roomId, message) {
     // Check if users are in the map, and add them if not
     socket.user_ids = socket.user_ids || [];
     socket.user_ids.push(userId);
-    userClientsMap[userId] = userClientsMap[userId] || { socket, roomId };
+    userClientsMap[userId] = userClientsMap[userId] || { sockets: [], roomId };
 
-    // Check if source user is in the map, and add if not
-    if (!userClientsMap.hasOwnProperty(message.from.id)) {
-      socket.user_ids.push(message.from.id);
-      userClientsMap[message.from.id] = { socket, roomId };
-    }
+    // Add the socket to the list of sockets for this room
+    userClientsMap[userId].sockets.push(socket);
 
     io.to(roomId).emit('messageResponse', message);
   }
