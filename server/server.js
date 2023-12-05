@@ -41,6 +41,9 @@ io.on('connection', (socket) => {
       if (!socket.group_ids.includes(groupId)) socket.group_ids.push(groupId);
       userClientsMap[groupId] = userClientsMap[groupId] || { sockets: [], roomId: groupId };
 
+      // Add the socket to the list of sockets for this group
+      userClientsMap[groupId].sockets.push(socket);
+
       io.to(groupId).emit('messageResponse', message);
     }
 
@@ -62,12 +65,29 @@ io.on('connection', (socket) => {
         if (socketId && userClientsMap[socketId]) {
           socket.leave(userClientsMap[socketId].roomId);
 
-          // Remove the disconnected socket from the room's sockets array
-          userClientsMap[socketId].sockets = userClientsMap[socketId].sockets.filter(s => s !== socket);
+          // If the socket is part of a group, remove it from the group's sockets array
+          if (socket.group_ids && socket.group_ids.length > 0) {
+            socket.group_ids.forEach(groupId => {
+              let groupInfo = userClientsMap[groupId];
+              if (groupInfo && groupInfo.sockets) {
+                groupInfo.sockets = groupInfo.sockets.filter(s => s !== socket);
 
-          // If no more sockets in the room, remove the room entry from the map
-          if (userClientsMap[socketId].sockets.length === 0) {
-            delete userClientsMap[socketId];
+                // If no more sockets in the group, remove the group entry from the map
+                if (groupInfo.sockets.length === 0) {
+                  delete userClientsMap[groupId];
+                }
+              }
+            });
+          }
+
+          // If the socket is part of an individual chat, remove it from the user's sockets array
+          if (userClientsMap[socketId] && userClientsMap[socketId].sockets) {
+            userClientsMap[socketId].sockets = userClientsMap[socketId].sockets.filter(s => s !== socket);
+
+            // If no more sockets for the user, remove the user entry from the map
+            if (userClientsMap[socketId].sockets.length === 0) {
+              delete userClientsMap[socketId];
+            }
           }
         }
       });
@@ -81,7 +101,7 @@ io.on('connection', (socket) => {
     socket.user_ids.push(userId);
     userClientsMap[userId] = userClientsMap[userId] || { sockets: [], roomId };
 
-    // Add the socket to the list of sockets for this room
+    // Add the socket to the list of sockets for this user
     userClientsMap[userId].sockets.push(socket);
 
     io.to(roomId).emit('messageResponse', message);
