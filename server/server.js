@@ -20,8 +20,8 @@ io.on('connection', (socket) => {
     let targetUsers = Array.isArray(message.to) ? message.to : [message.to];
     let sourceUserId = message.from.id;
 
-    targetUsers.forEach((user) => {
-      let userId = user.id;
+    if (targetUsers.length === 1) {
+      let userId = targetUsers[0].id;
 
       if (!userId || userId === sourceUserId) return;
 
@@ -30,8 +30,29 @@ io.on('connection', (socket) => {
 
       // Join the room
       socket.join(roomId);
-      emitMessageToRoom(userId, roomId, message);
-    });
+      emitMessageToIndividual(userId, roomId, message);
+    }
+    else {
+      let roomId;
+      targetUsers.forEach((user) => {
+        let userId = user.id;
+
+        if (!userId || userId === sourceUserId) return;
+
+        // Use a unique combination of user IDs as the room ID
+        roomId = message.groupName;
+
+        // Join the room
+        socket.join(roomId);
+
+        socket.user_ids = socket.user_ids || [];
+        socket.user_ids.push(userId);
+        userClientsMap[roomId] = userClientsMap[roomId] || { socket, roomId };
+      });
+      console.log(roomId,'rrrrrrrrrrrrrrr', userClientsMap)
+
+      io.to(roomId).emit('messageResponse', message);
+    }
   });
 
   socket.on('disconnect', () => {
@@ -55,7 +76,7 @@ io.on('connection', (socket) => {
     }
   }
 
-  function emitMessageToRoom(userId, roomId, message) {
+  function emitMessageToIndividual(userId, roomId, message) {
     // Check if users are in the map, and add them if not
     socket.user_ids = socket.user_ids || [];
     socket.user_ids.push(userId);

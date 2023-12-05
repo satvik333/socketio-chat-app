@@ -68,6 +68,7 @@ function ChatPage({ loggedInUser, socket }) {
         from: fromUser,
         message: inputMessage,
         socketID: socket.id,
+        groupName: toGroupName,
       };
       socket.emit('chat message', userMessage);
       setInputMessage('');
