@@ -35,6 +35,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    closeConnections();
+  });
+
+  socket.on('close old connections', () => {
+    closeConnections();
+  });
+
+  function closeConnections() {
     let userIds = socket.user_ids;
 
     if (userIds && userIds.length > 0) {
@@ -45,7 +53,7 @@ io.on('connection', (socket) => {
         }
       });
     }
-  });
+  }
 
   function emitMessageToRoom(userId, roomId, message) {
     // Check if users are in the map, and add them if not

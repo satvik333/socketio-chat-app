@@ -32,6 +32,7 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     const handleReceivedMessage = (msg) => {
+      console.log(msg,'msgggggggggggggggg')
       setMessages((prevMessages) => [...prevMessages, msg]);
       scrollToBottom();
     };
@@ -68,7 +69,6 @@ function ChatPage({ loggedInUser, socket }) {
         message: inputMessage,
         socketID: socket.id,
       };
-  
       socket.emit('chat message', userMessage);
       setInputMessage('');
       scrollToBottom();
@@ -79,12 +79,14 @@ function ChatPage({ loggedInUser, socket }) {
     clearMessages();
     setToUser(user);
     setToGroupName(null);
+    socket.emit('close old connections');
   }
 
   function selectGroup(group) {
     clearMessages();
     setToUser(group.members);
     setToGroupName(group.name);
+    socket.emit('close old connections');
   }
 
   function clearMessages() {
