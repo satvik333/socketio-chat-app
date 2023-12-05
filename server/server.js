@@ -45,11 +45,10 @@ io.on('connection', (socket) => {
         // Join the room
         socket.join(roomId);
 
-        socket.user_ids = socket.user_ids || [];
-        socket.user_ids.push(userId);
+        socket.group_ids = socket.group_ids || [];
+        if (!socket.group_ids.includes(roomId)) socket.group_ids.push(roomId);
         userClientsMap[roomId] = userClientsMap[roomId] || { socket, roomId };
       });
-      console.log(roomId,'rrrrrrrrrrrrrrr', userClientsMap)
 
       io.to(roomId).emit('messageResponse', message);
     }
@@ -64,13 +63,12 @@ io.on('connection', (socket) => {
   });
 
   function closeConnections() {
-    let userIds = socket.user_ids;
-
-    if (userIds && userIds.length > 0) {
-      userIds.forEach(userId => {
-        if (userId && userClientsMap[userId]) {
-          socket.leave(userClientsMap[userId].roomId);
-          delete userClientsMap[userId];
+    let socketIds = [...(socket?.user_ids || []), ...(socket?.group_ids || [])];
+    if (socketIds && socketIds.length > 0) {
+      socketIds.forEach(socketId => {
+        if (socketId && userClientsMap[socketId]) {
+          socket.leave(userClientsMap[socketId].roomId);
+          delete userClientsMap[socketId];
         }
       });
     }
@@ -87,8 +85,6 @@ io.on('connection', (socket) => {
       socket.user_ids.push(message.from.id);
       userClientsMap[message.from.id] = { socket, roomId };
     }
-
-    console.log(roomId,'rrrrrrrrrrrrrrr', userClientsMap)
 
     io.to(roomId).emit('messageResponse', message);
   }

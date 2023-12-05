@@ -32,7 +32,6 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     const handleReceivedMessage = (msg) => {
-      console.log(msg,'msgggggggggggggggg')
       setMessages((prevMessages) => [...prevMessages, msg]);
       scrollToBottom();
     };
