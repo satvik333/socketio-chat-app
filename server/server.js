@@ -41,8 +41,10 @@ io.on('connection', (socket) => {
       if (!socket.group_ids.includes(groupId)) socket.group_ids.push(groupId);
       userClientsMap[groupId] = userClientsMap[groupId] || { sockets: [], roomId: groupId };
 
-      // Add the socket to the list of sockets for this group
-      userClientsMap[groupId].sockets.push(socket);
+      // Add the socket to the list of sockets for this group only if it doesn't exist
+      if (!userClientsMap[groupId].sockets.includes(socket)) {
+        userClientsMap[groupId].sockets.push(socket);
+      }
 
       io.to(groupId).emit('messageResponse', message);
     }
@@ -101,8 +103,10 @@ io.on('connection', (socket) => {
     socket.user_ids.push(userId);
     userClientsMap[userId] = userClientsMap[userId] || { sockets: [], roomId };
 
-    // Add the socket to the list of sockets for this user
-    userClientsMap[userId].sockets.push(socket);
+    // Add the socket to the list of sockets for this user only if it doesn't exist
+    if (!userClientsMap[userId].sockets.includes(socket)) {
+      userClientsMap[userId].sockets.push(socket);
+    }
 
     io.to(roomId).emit('messageResponse', message);
   }
