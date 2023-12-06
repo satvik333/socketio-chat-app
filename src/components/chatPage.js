@@ -32,8 +32,10 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     const handleReceivedMessage = (msg) => {
-      setMessages((prevMessages) => [...prevMessages, msg]);
-      scrollToBottom();
+      if (msg.message) {
+        setMessages((prevMessages) => [...prevMessages, msg]);
+        scrollToBottom();
+      }
     };
 
     // Add the event listener
@@ -54,21 +56,7 @@ function ChatPage({ loggedInUser, socket }) {
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (inputMessage.trim() !== '') {
-      let target;
-  
-      if (toGroupName) {
-        target = toUser;
-      } else {
-        target = toUser;
-      }
-  
-      let userMessage = {
-        to: target,
-        from: fromUser,
-        message: inputMessage,
-        socketID: socket.id,
-        groupName: toGroupName,
-      };
+      let userMessage = payloadCreator();
       socket.emit('chat message', userMessage);
       setInputMessage('');
       scrollToBottom();
@@ -80,6 +68,8 @@ function ChatPage({ loggedInUser, socket }) {
     setToUser(user);
     setToGroupName(null);
     socket.emit('close old connections');
+    let userMessage = payloadCreator();
+    socket.emit('chat message', userMessage);
   }
 
   function selectGroup(group) {
@@ -87,10 +77,30 @@ function ChatPage({ loggedInUser, socket }) {
     setToUser(group.members);
     setToGroupName(group.name);
     socket.emit('close old connections');
+    let userMessage = payloadCreator();
+    socket.emit('chat message', userMessage);
   }
 
   function clearMessages() {
     setMessages([]);
+  }
+
+  function payloadCreator() {
+    let target;
+
+    if (toGroupName) {
+      target = toUser;
+    } else {
+      target = toUser;
+    }
+
+    return {
+      to: target,
+      from: fromUser,
+      message: inputMessage,
+      socketID: socket.id,
+      groupName: toGroupName,
+    };
   }
 
   return (

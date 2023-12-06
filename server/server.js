@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
     let sourceUserId = message.from.id;
 
     if (targetUsers.length === 1) {
-      let userId = targetUsers[0].id;
+      let userId = targetUsers[0]?.id;
 
       if (!userId || userId === sourceUserId) return;
 
