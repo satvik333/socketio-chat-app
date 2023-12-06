@@ -16,6 +16,9 @@ const io = socketIO(server, {
 let userClientsMap = {};
 
 io.on('connection', (socket) => {
+  // Initialize group_ids as an empty array
+  socket.group_ids = [];
+
   socket.on('chat message', (message) => {
     let targetUsers = Array.isArray(message.to) ? message.to : [message.to];
     let sourceUserId = message.from.id;
@@ -30,6 +33,8 @@ io.on('connection', (socket) => {
 
       // Join the room
       socket.join(roomId);
+
+      // Emit message after joining the room
       emitMessageToIndividual(userId, roomId, message);
     } else {
       let groupId = message.groupName;
@@ -37,8 +42,11 @@ io.on('connection', (socket) => {
       // Join the group room
       socket.join(groupId);
 
-      socket.group_ids = socket.group_ids || [];
-      if (!socket.group_ids.includes(groupId)) socket.group_ids.push(groupId);
+      // Check if the groupId is not already in the group_ids array
+      if (!socket.group_ids.includes(groupId)) {
+        socket.group_ids.push(groupId);
+      }
+
       userClientsMap[groupId] = userClientsMap[groupId] || { sockets: [], roomId: groupId };
 
       // Add the socket to the list of sockets for this group only if it doesn't exist
@@ -46,6 +54,7 @@ io.on('connection', (socket) => {
         userClientsMap[groupId].sockets.push(socket);
       }
 
+      // Emit message after joining the group room
       io.to(groupId).emit('messageResponse', message);
     }
 
