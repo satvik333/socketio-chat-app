@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
+const mysql = require('mysql');
 
 const app = express();
 const server = http.createServer(app);
@@ -10,6 +11,13 @@ const io = socketIO(server, {
     methods: ['GET', 'POST'],
     credentials: true,
   },
+});
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',        
+  password: '',        
+  database: 'kapture_chat',  
 });
 
 // Dictionary to store connected clients based on user_id
@@ -125,3 +133,13 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL');
+});
+
+connection.end();

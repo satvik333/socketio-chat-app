@@ -139,7 +139,7 @@ function ChatPage({ loggedInUser, socket }) {
         <form onSubmit={handleSendMessage}>
           <input
             type="text"
-            placeholder="Type here"
+            placeholder="Click here to type"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
           />
