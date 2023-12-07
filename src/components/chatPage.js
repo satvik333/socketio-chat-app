@@ -63,13 +63,19 @@ function ChatPage({ loggedInUser, socket }) {
     }
   };
 
+  useEffect(()=>{
+    console.log(toUser,'//////////////')
+    if (toUser && fromUser) {
+      let userMessage = payloadCreator();
+      socket.emit('chat message', userMessage);
+    }
+  },[toUser]);
+
   function selectUser(user) {
     clearMessages();
     setToUser(user);
     setToGroupName(null);
     socket.emit('close old connections');
-    let userMessage = payloadCreator();
-    socket.emit('chat message', userMessage);
   }
 
   function selectGroup(group) {
@@ -77,8 +83,6 @@ function ChatPage({ loggedInUser, socket }) {
     setToUser(group.members);
     setToGroupName(group.name);
     socket.emit('close old connections');
-    let userMessage = payloadCreator();
-    socket.emit('chat message', userMessage);
   }
 
   function clearMessages() {
@@ -86,7 +90,6 @@ function ChatPage({ loggedInUser, socket }) {
   }
 
   function payloadCreator() {
-    console.log(toUser,'//////////////')
     return {
       to: toUser,
       from: fromUser,
