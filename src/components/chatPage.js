@@ -99,7 +99,7 @@ function ChatPage({ loggedInUser, socket }) {
   }
 
   function logOut() {
-    navigate('/login');
+    window.location.reload();
   }
 
   return (
