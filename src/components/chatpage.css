@@ -10,18 +10,19 @@ body {
   height: 100vh;
 }
 
-.UsersList, .ChatPage {
+.UsersList,
+.ChatPage {
   border: 1px solid #ccc;
   width: 300px;
   overflow-y: auto;
 }
 
-.UsersList h1, .ChatPage h2 {
-  font-size: 18px;
+.UsersList h1,
+.ChatPage h2 {
+  font-size: 20px;
   margin: 10px;
-  color: blue;
+  color: brown;
   text-decoration: underline;
-
 }
 
 ul {
@@ -46,19 +47,34 @@ ul li:hover {
   flex-direction: column;
 }
 
-.ChatPage h2 {
-  font-size: 16px;
+.ChatPage .line {
+  border-top: 1px solid #ccc;
   margin: 10px;
 }
 
-.ChatPage ul {
+.ChatPage .message-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: #fff;
   flex: 1;
   overflow-y: auto;
+}
+
+.ChatPage h2 {
+  font-size: 20px;
+  margin: 10px 10px 5px;
+  color: #2c3e50;
+}
+
+.ChatPage ul {
   padding: 10px;
+  margin: 10px;
 }
 
 .ChatPage ul li {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .ChatPage form {
@@ -95,3 +111,10 @@ ul li:hover {
   background-color: lightskyblue;
 }
 
+.log-out {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: red;
+  width: 19%;
+}

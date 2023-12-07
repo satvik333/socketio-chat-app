@@ -63,13 +63,12 @@ function ChatPage({ loggedInUser, socket }) {
     }
   };
 
-  useEffect(()=>{
-    console.log(toUser,'//////////////')
+  useEffect(() => {
     if (toUser && fromUser) {
       let userMessage = payloadCreator();
       socket.emit('chat message', userMessage);
     }
-  },[toUser]);
+  }, [toUser]);
 
   function selectUser(user) {
     clearMessages();
@@ -99,6 +98,10 @@ function ChatPage({ loggedInUser, socket }) {
     };
   }
 
+  function logOut() {
+    navigate('/login');
+  }
+
   return (
     <div className="App">
       <div className="UsersList">
@@ -118,11 +121,12 @@ function ChatPage({ loggedInUser, socket }) {
             </li>
           ))}
         </ul>
+        <button className='log-out' onClick={() => logOut()}>Log Out</button>
       </div>
       <div className="ChatPage">
-        <h2>From: {fromUser?.name}</h2>
-        <h2>To: {toUser?.name || toGroupName}</h2>
-        <ul ref={messagesRef}>
+        <h2 className='from-user'>You: {fromUser?.name}</h2>
+        <div className="line"></div>
+        <ul className="message-box" ref={messagesRef}>
           {messages &&
             messages.map((msg, index) => (
               <li key={index} className={msg?.from?.email === loggedInUser.email ? 'right' : 'left'}>
