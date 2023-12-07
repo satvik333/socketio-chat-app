@@ -108,7 +108,7 @@ function ChatPage({ loggedInUser, socket }) {
         <h1>Users</h1>
         <ul>
           {usersArray.map((user, index) => (
-            <li key={index}>
+            <li key={index} className={user?.id === toUser?.id ? 'selected' : ''}>
               <strong onClick={() => selectUser(user)}>{user.name}</strong>
             </li>
           ))}
@@ -116,7 +116,7 @@ function ChatPage({ loggedInUser, socket }) {
         <h1>Groups</h1>
         <ul>
           {groups.map((group, index) => (
-            <li key={index}>
+            <li key={index} className={toGroupName === group?.name ? 'selected' : ''}>
               <strong onClick={() => selectGroup(group)}>{group.name}</strong>
             </li>
           ))}
@@ -130,7 +130,7 @@ function ChatPage({ loggedInUser, socket }) {
           {messages &&
             messages.map((msg, index) => (
               <li key={index} className={msg?.from?.email === loggedInUser.email ? 'right' : 'left'}>
-                <strong>{msg?.from?.email !== loggedInUser.email && msg?.from?.name}</strong>
+                <strong>{(msg?.from?.email !== loggedInUser.email && toGroupName) && msg?.from?.name}</strong>
                 <br />
                 {msg?.message}
               </li>

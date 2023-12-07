@@ -37,9 +37,6 @@ ul li {
   border-color: black;
 }
 
-ul li:hover {
-  background-color: #f5f5f5;
-}
 
 .ChatPage {
   flex: 1;
@@ -117,4 +114,8 @@ ul li:hover {
   left: 0;
   background-color: red;
   width: 19%;
+}
+
+.selected {
+  background-color: green;
 }
