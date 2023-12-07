@@ -86,16 +86,9 @@ function ChatPage({ loggedInUser, socket }) {
   }
 
   function payloadCreator() {
-    let target;
-
-    if (toGroupName) {
-      target = toUser;
-    } else {
-      target = toUser;
-    }
-
+    console.log(toUser,'//////////////')
     return {
-      to: target,
+      to: toUser,
       from: fromUser,
       message: inputMessage,
       socketID: socket.id,
