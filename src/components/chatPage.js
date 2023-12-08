@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chatpage.css';
 import { useNavigate } from 'react-router-dom';
-import { getUsers } from '../services/chatService'
+import { getUsers } from '../services/chatService';
 
 function ChatPage({ loggedInUser, socket }) {
   const [usersArray, setUsersArray] = useState([]);
@@ -21,7 +21,7 @@ function ChatPage({ loggedInUser, socket }) {
       setUsersArray(users);
 
       const updatedGroups = users.reduce((groups, user) => {
-        const existingGroup = groups.find(group => group.name === user.group_id);
+        const existingGroup = groups.find((group) => group.name === user.group_id);
 
         if (existingGroup) {
           // Add the user to the existing group
@@ -37,8 +37,12 @@ function ChatPage({ loggedInUser, socket }) {
 
         return groups;
       }, []);
-      console.log(updatedGroups,'iuighsuiafgyuuhgjsgadyu')
-      setUsersGroup(updatedGroups);
+
+      const filteredGroup = updatedGroups.filter((group) => {
+        return group.members.some((member) => member?.id === loggedInUser?.id);
+      });
+
+      setUsersGroup(filteredGroup);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -69,7 +73,6 @@ function ChatPage({ loggedInUser, socket }) {
     const handleReceivedMessage = (msg) => {
       if (msg.message) {
         setMessages((prevMessages) => [...prevMessages, msg]);
-        scrollToBottom();
       }
     };
 
@@ -81,6 +84,11 @@ function ChatPage({ loggedInUser, socket }) {
       socket.off('messageResponse', handleReceivedMessage);
     };
   }, [socket]);
+
+  // Scroll to bottom whenever messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const scrollToBottom = () => {
     if (messagesRef.current) {
@@ -94,7 +102,6 @@ function ChatPage({ loggedInUser, socket }) {
       let userMessage = payloadCreator();
       socket.emit('chat message', userMessage);
       setInputMessage('');
-      scrollToBottom();
     }
   };
 
@@ -150,16 +157,18 @@ function ChatPage({ loggedInUser, socket }) {
         </ul>
         <h1>Groups</h1>
         <ul>
-          {groups.map((group, index) => (
+          {usersGroup.map((group, index) => (
             <li key={index} className={toGroupName === group?.name ? 'selected' : ''}>
               <strong onClick={() => selectGroup(group)}>{group.name}</strong>
             </li>
           ))}
         </ul>
-        <button className='log-out' onClick={() => logOut()}>Log Out</button>
+        <button className="log-out" onClick={() => logOut()}>
+          Log Out
+        </button>
       </div>
       <div className="ChatPage">
-        <h2 className='from-user'>You: {fromUser?.name}</h2>
+        <h2 className="from-user">You: {fromUser?.name}</h2>
         <div className="line"></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
