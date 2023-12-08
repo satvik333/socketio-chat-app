@@ -16,15 +16,12 @@ const io = socketIO(server, {
 
 app.use('/', usersRoute);
 
-
-// Dictionary to store connected clients based on user_id
 let userClientsMap = {};
 
 io.on('connection', (socket) => {
-  // Initialize group_ids as an empty array
   socket.group_ids = [];
 
-  socket.on('chat message', (message) => {
+  socket.on('chat message', async (message) => {
     let targetUsers = Array.isArray(message.to) ? message.to : [message.to];
     let sourceUserId = message.from.id;
 
@@ -33,36 +30,42 @@ io.on('connection', (socket) => {
 
       if (!userId || userId === sourceUserId) return;
 
-      // Use a unique combination of user IDs as the room ID
       let roomId = [userId, sourceUserId].sort().join('_');
 
-      // Join the room
       socket.join(roomId);
 
-      // Emit message after joining the room
       emitMessageToIndividual(userId, roomId, message);
+
+      // Store the message in the database
+      try {
+        await storeMessageInDatabase(roomId, sourceUserId, userId, message.message);
+      } catch (error) {
+        console.error('Error storing message in the database:', error);
+      }
     } else {
       let groupId = message.groupName;
 
-      // Join the group room
       socket.join(groupId);
 
-      // Check if the groupId is not already in the group_ids array
       if (!socket.group_ids.includes(groupId)) {
         socket.group_ids.push(groupId);
       }
 
       userClientsMap[groupId] = userClientsMap[groupId] || { sockets: [], roomId: groupId };
 
-      // Add the socket to the list of sockets for this group only if it doesn't exist
       if (!userClientsMap[groupId].sockets.some(s => s.id === socket.id)) {
         userClientsMap[groupId].sockets.push(socket);
       }
 
-      // Emit message after joining the group room
       io.to(groupId).emit('messageResponse', message);
-    }
 
+      // Store the message in the database
+      try {
+        await storeMessageInDatabase(groupId, sourceUserId, message);
+      } catch (error) {
+        console.error('Error storing message in the database:', error);
+      }
+    }
   });
 
   socket.on('disconnect', () => {
@@ -80,14 +83,12 @@ io.on('connection', (socket) => {
         if (socketId && userClientsMap[socketId]) {
           socket.leave(userClientsMap[socketId].roomId);
 
-          // If the socket is part of a group, remove it from the group's sockets array
           if (socket.group_ids && socket.group_ids.length > 0) {
             socket.group_ids.forEach(groupId => {
               let groupInfo = userClientsMap[groupId];
               if (groupInfo && groupInfo.sockets) {
                 groupInfo.sockets = groupInfo.sockets.filter(s => s.id !== socket.id);
 
-                // If no more sockets in the group, remove the group entry from the map
                 if (groupInfo.sockets.length === 0) {
                   delete userClientsMap[groupId];
                 }
@@ -95,11 +96,9 @@ io.on('connection', (socket) => {
             });
           }
 
-          // If the socket is part of an individual chat, remove it from the user's sockets array
           if (userClientsMap[socketId] && userClientsMap[socketId].sockets) {
             userClientsMap[socketId].sockets = userClientsMap[socketId].sockets.filter(s => s.id !== socket.id);
 
-            // If no more sockets for the user, remove the user entry from the map
             if (userClientsMap[socketId].sockets.length === 0) {
               delete userClientsMap[socketId];
             }
@@ -110,12 +109,10 @@ io.on('connection', (socket) => {
   }
 
   function emitMessageToIndividual(userId, roomId, message) {
-    // Check if users are in the map, and add them if not
     socket.user_ids = socket.user_ids || [];
     socket.user_ids.push(userId);
     userClientsMap[userId] = userClientsMap[userId] || { sockets: [], roomId };
 
-    // Add the socket to the list of sockets for this user only if it doesn't exist
     if (!userClientsMap[userId].sockets.some(s => s.id === socket.id)) {
       userClientsMap[userId].sockets.push(socket);
     }
@@ -129,13 +126,22 @@ server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
+async function storeMessageInDatabase(roomId, sourceUserId, targetUserId, message, groupName = null) {
+  console.log(roomId, sourceUserId, targetUserId, message, groupName = null, '///////////////')
+  try {
+    const [result] = await connection.query(
+      'INSERT INTO chat_messages (from_user_id, to_user_id, group_name, message, room_id) VALUES (?, ?, ?, ?, ?)',
+      [sourceUserId, targetUserId, groupName, message, roomId]
+    );
+
+    console.log('Message stored in the database. Insert ID:', result.insertId);
+  } catch (error) {
+    console.error('Error storing message in the database:', error);
+    throw error;
   }
-  console.log('Connected to MySQL');
-});
+}
+
+
 
 function closeServer() {
   server.close(() => {
@@ -143,4 +149,3 @@ function closeServer() {
     connection.end();
   });
 }
-
