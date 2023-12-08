@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chatpage.css';
-import { usersArray, usersGroup } from './userList';
 import { useNavigate } from 'react-router-dom';
+import { getUsers } from '../services/chatService'
 
 function ChatPage({ loggedInUser, socket }) {
+  const [usersArray, setUsersArray] = useState([]);
+  const [usersGroup, setUsersGroup] = useState([]);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [fromUser, setFromUser] = useState(null);
@@ -12,6 +14,39 @@ function ChatPage({ loggedInUser, socket }) {
   const [groups, setGroups] = useState([]);
   const messagesRef = useRef(null);
   const navigate = useNavigate();
+
+  const fetchUsersAndGroups = async () => {
+    try {
+      const users = await getUsers();
+      setUsersArray(users);
+
+      const updatedGroups = users.reduce((groups, user) => {
+        const existingGroup = groups.find(group => group.name === user.group_id);
+
+        if (existingGroup) {
+          // Add the user to the existing group
+          existingGroup.members.push(user);
+        } else {
+          // Create a new group
+          const newGroup = {
+            name: user.group_id,
+            members: [user],
+          };
+          groups.push(newGroup);
+        }
+
+        return groups;
+      }, []);
+      console.log(updatedGroups,'iuighsuiafgyuuhgjsgadyu')
+      setUsersGroup(updatedGroups);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsersAndGroups();
+  }, []);
 
   useEffect(() => {
     if (!loggedInUser) {

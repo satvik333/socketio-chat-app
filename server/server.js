@@ -1,7 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
-const mysql = require('mysql');
+const connection = require('./databaseConnection');
+const usersRoute = require('./routes/usersRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -13,12 +14,8 @@ const io = socketIO(server, {
   },
 });
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',        
-  password: '',        
-  database: 'kapture_chat',  
-});
+app.use('/', usersRoute);
+
 
 // Dictionary to store connected clients based on user_id
 let userClientsMap = {};
@@ -66,7 +63,6 @@ io.on('connection', (socket) => {
       io.to(groupId).emit('messageResponse', message);
     }
 
-    console.log(userClientsMap, '11111111111111111111');
   });
 
   socket.on('disconnect', () => {
@@ -111,7 +107,6 @@ io.on('connection', (socket) => {
         }
       });
     }
-    console.log(userClientsMap, '222222222222222222222222');
   }
 
   function emitMessageToIndividual(userId, roomId, message) {
@@ -142,4 +137,10 @@ connection.connect((err) => {
   console.log('Connected to MySQL');
 });
 
-connection.end();
+function closeServer() {
+  server.close(() => {
+    console.log('Server is closed.');
+    connection.end();
+  });
+}
+
