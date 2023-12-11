@@ -71,7 +71,8 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     const handleReceivedMessage = (msg) => {
-      if (msg.message) {
+      console.log('hererrrr',msg)
+      if (msg?.message) {
         setMessages((prevMessages) => [...prevMessages, msg]);
       }
     };
@@ -117,6 +118,12 @@ function ChatPage({ loggedInUser, socket }) {
     setToUser(user);
     setToGroupName(null);
     socket.emit('close old connections');
+    let chatInfo = {
+      to: user,
+      from: loggedInUser,
+    }
+    console.log(chatInfo,'cccccccccccccccccc')
+    socket.emit('get user messages', chatInfo);
   }
 
   function selectGroup(group) {

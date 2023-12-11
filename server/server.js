@@ -37,10 +37,12 @@ io.on('connection', (socket) => {
       emitMessageToIndividual(userId, roomId, message);
 
       // Store the message in the database
-      try {
-        await storeMessageInDatabase(roomId, sourceUserId, userId, message.message);
-      } catch (error) {
-        console.error('Error storing message in the database:', error);
+      if (message.message) {
+        try {
+          await storeMessageInDatabase(roomId, sourceUserId, userId, message.message);
+        } catch (error) {
+          console.error('Error storing message in the database:', error);
+        }
       }
     } else {
       let groupId = message.groupName;
@@ -75,6 +77,21 @@ io.on('connection', (socket) => {
   socket.on('close old connections', () => {
     closeConnections();
   });
+
+  socket.on('get user messages', async (chatInfo) => {
+    try {
+      const [results] = await connection.execute(
+        'SELECT * FROM chat_messages WHERE from_user_id = ? AND to_user_id = ?',
+        [chatInfo.from.id, chatInfo.to.id]
+      );
+      let resultData = results[0];
+      console.log(resultData,'///////???????????????????')
+      socket.emit('messageResponse', resultData);
+    } catch (error) {
+      console.error('Error fetching user messages:', error);
+    }
+  });
+  
 
   function closeConnections() {
     let socketIds = [...(socket?.user_ids || []), ...(socket?.group_ids || [])];
@@ -127,7 +144,6 @@ server.listen(PORT, () => {
 });
 
 async function storeMessageInDatabase(roomId, sourceUserId, targetUserId, message, groupName = null) {
-  console.log(roomId, sourceUserId, targetUserId, message, groupName = null, '///////////////')
   try {
     const [result] = await connection.query(
       'INSERT INTO chat_messages (from_user_id, to_user_id, group_name, message, room_id) VALUES (?, ?, ?, ?, ?)',
