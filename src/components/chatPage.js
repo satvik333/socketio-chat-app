@@ -70,11 +70,13 @@ function ChatPage({ loggedInUser, socket }) {
   }, [loggedInUser]);
 
   useEffect(() => {
-    const handleReceivedMessage = (msg) => {
-      console.log('hererrrr',msg)
-      if (msg?.message) {
-        setMessages((prevMessages) => [...prevMessages, msg]);
-      }
+    const handleReceivedMessage = (messages) => {
+      messages.forEach((msg) => {
+        if (msg?.message) {
+          setMessages((prevMessages) => [...prevMessages, msg]);
+        }
+      });
+      console.log(messages,'mmmmmmmmmmm')
     };
 
     // Add the event listener
@@ -122,7 +124,6 @@ function ChatPage({ loggedInUser, socket }) {
       to: user,
       from: loggedInUser,
     }
-    console.log(chatInfo,'cccccccccccccccccc')
     socket.emit('get user messages', chatInfo);
   }
 
@@ -180,7 +181,7 @@ function ChatPage({ loggedInUser, socket }) {
         <ul className="message-box" ref={messagesRef}>
           {messages &&
             messages.map((msg, index) => (
-              <li key={index} className={msg?.from?.email === loggedInUser.email ? 'right' : 'left'}>
+              <li key={index} className={msg?.from?.id === loggedInUser.id || msg?.from_user_id === loggedInUser.id ? 'right' : 'left'}>
                 <strong>{(msg?.from?.email !== loggedInUser.email && toGroupName) && msg?.from?.name}</strong>
                 <br />
                 {msg?.message}

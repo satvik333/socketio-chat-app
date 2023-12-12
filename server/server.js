@@ -81,12 +81,10 @@ io.on('connection', (socket) => {
   socket.on('get user messages', async (chatInfo) => {
     try {
       const [results] = await connection.execute(
-        'SELECT * FROM chat_messages WHERE from_user_id = ? AND to_user_id = ?',
-        [chatInfo.from.id, chatInfo.to.id]
+        'SELECT * FROM chat_messages WHERE (from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)',
+        [chatInfo.from.id, chatInfo.to.id, chatInfo.to.id, chatInfo.from.id]
       );
-      let resultData = results[0];
-      console.log(resultData,'///////???????????????????')
-      socket.emit('messageResponse', resultData);
+      socket.emit('messageResponse', results);
     } catch (error) {
       console.error('Error fetching user messages:', error);
     }
@@ -134,7 +132,7 @@ io.on('connection', (socket) => {
       userClientsMap[userId].sockets.push(socket);
     }
 
-    io.to(roomId).emit('messageResponse', message);
+    io.to(roomId).emit('messageResponse', [message]);
   }
 });
 
