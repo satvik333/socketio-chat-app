@@ -22,4 +22,14 @@ async function getUsers() {
   }
 }
 
-export { getUsers };
+async function checkLoginUser(email) {
+  try {
+    const response = await axios.post(`${baseUrl}/login`, { email: email });
+    return response.data;
+  } catch (error) {
+    console.error(`Error while logging in`, error);
+    throw error;
+  }
+}
+
+export { getUsers, checkLoginUser };

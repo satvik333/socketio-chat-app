@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './loginpage.css';
-import { usersArray } from './userList';
+import { checkLoginUser } from '../services/chatService';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage({ onLogin }) {
@@ -16,14 +16,14 @@ function LoginPage({ onLogin }) {
     setEmail(event.target.value);
   };
 
-  const checkForTheUser = () => {
-    const loginUser = usersArray.find((user) => user.email === email);
-    return loginUser;
+  const checkForTheUser = async () => {
+    const { user } = await checkLoginUser(email);
+    return user;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const loggedInUser = checkForTheUser();
+    const loggedInUser = await checkForTheUser();
     if (loggedInUser) {
       onLogin(loggedInUser);
       navigate('/chat')
