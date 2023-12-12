@@ -1,7 +1,8 @@
 import axios from 'axios';
+import configParams from '../frontendConfig';
 
 // Defined the base API URL
-const baseUrl = 'http://localhost:3001';
+const baseUrl = `${configParams.appEnv}:3001`;
 
 async function getData(route) {
   try {

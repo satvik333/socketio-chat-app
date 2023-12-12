@@ -3,12 +3,13 @@ const http = require('http');
 const socketIO = require('socket.io');
 const connection = require('./databaseConnection');
 const usersRoute = require('./routes/usersRoutes');
+const configParams = require('./backendConfig');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://172.16.0.165:3000'],
+    origin: [`${configParams.appEnv}:3000`, `${configParams.appEnv}:3001`, 'http://172.16.0.165:3000'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -149,7 +150,7 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on ${configParams.appEnv}:${PORT}`);
 });
 
 async function storeMessageInDatabase(roomId, sourceUserId, targetUserId, message, groupName = null) {
