@@ -132,6 +132,11 @@ function ChatPage({ loggedInUser, socket }) {
     setToUser(group.members);
     setToGroupName(group.name);
     socket.emit('close old connections');
+    let chatInfo = {
+      to: group.name,
+      from: loggedInUser,
+    }
+    socket.emit('get group messages', chatInfo);
   }
 
   function clearMessages() {
@@ -182,7 +187,7 @@ function ChatPage({ loggedInUser, socket }) {
           {messages &&
             messages.map((msg, index) => (
               <li key={index} className={msg?.from?.id === loggedInUser.id || msg?.from_user_id === loggedInUser.id ? 'right' : 'left'}>
-                <strong>{(msg?.from?.email !== loggedInUser.email && toGroupName) && msg?.from?.name}</strong>
+                <strong>{(msg?.from?.email !== loggedInUser.email && toGroupName) && msg?.from?.name || (loggedInUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
                 <br />
                 {msg?.message}
               </li>

@@ -59,13 +59,15 @@ io.on('connection', (socket) => {
         userClientsMap[groupId].sockets.push(socket);
       }
 
-      io.to(groupId).emit('messageResponse', message);
+      io.to(groupId).emit('messageResponse', [message]);
 
       // Store the message in the database
-      try {
-        await storeMessageInDatabase(groupId, sourceUserId, message);
-      } catch (error) {
-        console.error('Error storing message in the database:', error);
+      if (message.message) {
+        try {
+          await storeMessageInDatabase(groupId, sourceUserId, null, message.message, message.groupName);
+        } catch (error) {
+          console.error('Error storing message in the database:', error);
+        }
       }
     }
   });
@@ -89,7 +91,18 @@ io.on('connection', (socket) => {
       console.error('Error fetching user messages:', error);
     }
   });
-  
+
+  socket.on('get group messages', async (chatInfo) => {
+    try {
+      const [results] = await connection.execute(
+        'SELECT cm.*, u.* FROM chat_messages cm JOIN users u ON cm.from_user_id = u.id WHERE cm.group_name = ?',
+        [chatInfo.to]
+      );
+      socket.emit('messageResponse', results);
+    } catch (error) {
+      console.error('Error fetching user messages:', error);
+    }
+  });
 
   function closeConnections() {
     let socketIds = [...(socket?.user_ids || []), ...(socket?.group_ids || [])];
