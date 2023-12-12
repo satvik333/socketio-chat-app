@@ -3,7 +3,6 @@ const router = express.Router();
 const connection = require('../databaseConnection');
 const cors = require('cors');
 
-// Enable CORS for all routes
 router.use(cors());
 router.use(express.json());
 

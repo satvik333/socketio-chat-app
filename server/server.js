@@ -36,7 +36,6 @@ io.on('connection', (socket) => {
 
       emitMessageToIndividual(userId, roomId, message);
 
-      // Store the message in the database
       if (message.message) {
         try {
           await storeMessageInDatabase(roomId, sourceUserId, userId, message.message);
@@ -61,7 +60,6 @@ io.on('connection', (socket) => {
 
       io.to(groupId).emit('messageResponse', [message]);
 
-      // Store the message in the database
       if (message.message) {
         try {
           await storeMessageInDatabase(groupId, sourceUserId, null, message.message, message.groupName);
@@ -167,8 +165,6 @@ async function storeMessageInDatabase(roomId, sourceUserId, targetUserId, messag
     throw error;
   }
 }
-
-
 
 function closeServer() {
   server.close(() => {

@@ -24,10 +24,8 @@ function ChatPage({ loggedInUser, socket }) {
         const existingGroup = groups.find((group) => group.name === user.group_id);
 
         if (existingGroup) {
-          // Add the user to the existing group
           existingGroup.members.push(user);
         } else {
-          // Create a new group
           const newGroup = {
             name: user.group_id,
             members: [user],
@@ -76,19 +74,15 @@ function ChatPage({ loggedInUser, socket }) {
           setMessages((prevMessages) => [...prevMessages, msg]);
         }
       });
-      console.log(messages,'mmmmmmmmmmm')
     };
 
-    // Add the event listener
     socket.on('messageResponse', handleReceivedMessage);
 
-    // Cleanup function to remove the event listener when the component unmounts
     return () => {
       socket.off('messageResponse', handleReceivedMessage);
     };
   }, [socket]);
 
-  // Scroll to bottom whenever messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);

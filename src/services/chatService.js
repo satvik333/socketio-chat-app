@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Define the base API URL
+// Defined the base API URL
 const baseUrl = 'http://localhost:3001';
 
 async function getData(route) {

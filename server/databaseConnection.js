@@ -6,7 +6,7 @@ const connection = mysql.createPool({
     password: '',
     database: 'kapture_chat',
     waitForConnections: true,
-    connectionLimit: 10, // You can adjust the connection limit as needed
+    connectionLimit: 10, // Adjust the connection limit as needed
     queueLimit: 0,
   });
 
