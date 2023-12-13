@@ -13,6 +13,10 @@ const io = socketIO(server, {
     methods: ['GET', 'POST'],
     credentials: true,
   },
+  // reconnection options
+  reconnection: true,
+  reconnectionAttempts: 10, // Set the number of attempts
+  reconnectionDelay: 1000, // Set the delay between attempts (in milliseconds)
 });
 
 app.use('/', usersRoute);

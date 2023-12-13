@@ -214,10 +214,9 @@ function ChatPage({ loggedInUser, socket }) {
           {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="40" textSizeRatio={1.75} />}
           <h2>{toUser?.name || toGroupName}</h2>
         </div>
-        <h2 className="from-user">You: {fromUser?.name}</h2>
+        <h2 className="from-user">You: <Avatar className='from-user-avatar' name={loggedInUser?.name} round={true} size="40" textSizeRatio={1.75} />{fromUser?.name}</h2>
         {toGroupName && isTyping && (<h4 className='typing'>{`${typingUser?.name} is typing....`}</h4>)}
         {!toGroupName && isTyping && (<h4 className='typing'>Typing....</h4>)}
-        <div className="line"></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
             messages.map((msg, index) => (
@@ -228,6 +227,7 @@ function ChatPage({ loggedInUser, socket }) {
               </li>
             ))}
         </ul>
+        <div className="line"></div>
         <form onSubmit={handleSendMessage}>
           <div className="chat-container">
             <input

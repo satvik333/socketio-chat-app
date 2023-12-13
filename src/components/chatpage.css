@@ -21,8 +21,7 @@ body {
 .ChatPage h2 {
   font-size: 20px;
   margin: 10px;
-  color: brown;
-  text-decoration: underline;
+  color: darkblue;
 }
 
 ul {
@@ -45,7 +44,7 @@ ul li {
 }
 
 .ChatPage .line {
-  border-top: 1px solid #ccc;
+  border-top: 1px solid black;
   margin: 10px;
 }
 
@@ -57,6 +56,8 @@ ul li {
   background-color: #fff;
   flex: 1;
   overflow-y: auto;
+  padding-top: 20px;
+  margin-bottom: 0;
 }
 
 .ChatPage h2 {
@@ -75,6 +76,7 @@ ul li {
 }
 
 .ChatPage form {
+  margin-top: 0;
   display: flex;
   background-color: #fff;
   padding: 10px;
@@ -123,6 +125,7 @@ ul li {
 .from-user {
   position: absolute;
   right: 0;
+  top: 0;
 }
 
 .chat-container .chat-input {
@@ -165,4 +168,8 @@ h2 {
   font-size: 20px;
   margin: 10px 0 5px;
   color: #2c3e50;
+}
+
+.from-user-avatar {
+  margin-right: 5px;
 }
