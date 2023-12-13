@@ -15,6 +15,8 @@ function ChatPage({ loggedInUser, socket }) {
   const [groups, setGroups] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState(null);
+  const [isIdle, setIsIdle] = useState(false);
+
   const messagesRef = useRef(null);
   const navigate = useNavigate();
 
@@ -48,6 +50,35 @@ function ChatPage({ loggedInUser, socket }) {
       console.error('Error fetching data:', error);
     }
   };
+
+  useEffect(() => {
+    let idleTimer;
+
+    const resetIdleTimer = () => {
+      clearTimeout(idleTimer);
+
+      idleTimer = setTimeout(() => {
+        setIsIdle(true);
+        socket.emit('close old connections', loggedInUser);
+      }, 15000); // Adjust the time threshold (in milliseconds) as needed
+    };
+
+    const handleUserActivity = () => {
+      setIsIdle(false);
+      resetIdleTimer();
+    };
+
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+
+    resetIdleTimer();
+
+    return () => {
+      clearTimeout(idleTimer);
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+    };
+  }, []);
 
   useEffect(() => {
     const handleTyping = (typingInfo) => {
@@ -209,7 +240,7 @@ function ChatPage({ loggedInUser, socket }) {
           Log Out
         </button>
       </div>
-      <div className="ChatPage">
+      {(toUser || toGroupName) && <div className="ChatPage">
         <div className="user-info">
           {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="40" textSizeRatio={1.75} />}
           <h2>{toUser?.name || toGroupName}</h2>
@@ -244,7 +275,7 @@ function ChatPage({ loggedInUser, socket }) {
             <button className="send-button" type="submit">Send</button>
           </div>
         </form>
-      </div>
+      </div>}
     </div>
   );
 }

@@ -122,7 +122,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('close old connections', () => {
+    console.log(userClientsMap,'1111111111111111111111111')
     closeConnections();
+    console.log(userClientsMap,'2222222222222')
   });
 
   socket.on('get user messages', async (chatInfo) => {
