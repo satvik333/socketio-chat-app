@@ -71,7 +71,7 @@ ul li {
 }
 
 .ChatPage ul li {
-  margin-bottom: 15px;
+  margin-bottom: 7px;
 }
 
 .ChatPage form {
@@ -140,7 +140,7 @@ ul li {
 }
 
 .typing {
-  margin-left: 10px;
+  margin-left: 60px;
 }
 
 .avatar {
@@ -154,7 +154,7 @@ ul li {
 
 .user-info {
   display: flex;
-  align-items: center; 
+  align-items: center;
 }
 
 .user-avatar {

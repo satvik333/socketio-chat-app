@@ -14,6 +14,7 @@ function ChatPage({ loggedInUser, socket }) {
   const [toGroupName, setToGroupName] = useState(null);
   const [groups, setGroups] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [typingUser, setTypingUser] = useState(null);
   const messagesRef = useRef(null);
   const navigate = useNavigate();
 
@@ -50,7 +51,13 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     const handleTyping = (typingInfo) => {
-      typingInfo.action === 'typing' && typingInfo.from.id !== loggedInUser.id ? setIsTyping(true) : setIsTyping(false);
+      if (typingInfo.action === 'typing' && typingInfo.from.id !== loggedInUser.id) {
+        setIsTyping(true);
+        setTypingUser(typingInfo.from);
+      } else {
+        setIsTyping(false);
+        setTypingUser(null);
+      }
     };
 
     socket.on('typing', handleTyping);
@@ -208,7 +215,7 @@ function ChatPage({ loggedInUser, socket }) {
           <h2>{toUser?.name || toGroupName}</h2>
         </div>
         <h2 className="from-user">You: {fromUser?.name}</h2>
-        <h4 className='typing'>{isTyping && 'Typing....'}</h4>
+        <h4 className='typing'>{isTyping && `${typingUser?.name} is typing....`}</h4>
         <div className="line"></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
