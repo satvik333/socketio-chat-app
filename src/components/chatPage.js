@@ -215,7 +215,8 @@ function ChatPage({ loggedInUser, socket }) {
           <h2>{toUser?.name || toGroupName}</h2>
         </div>
         <h2 className="from-user">You: {fromUser?.name}</h2>
-        <h4 className='typing'>{isTyping && `${typingUser?.name} is typing....`}</h4>
+        <h4 className='typing'>{toGroupName && isTyping && `${typingUser?.name} is typing....`}</h4>
+        <h4 className='typing'>{!toGroupName && isTyping && `Typing....`}</h4>
         <div className="line"></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
