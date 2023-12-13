@@ -31,7 +31,7 @@ ul {
 }
 
 ul li {
-  padding: 10px;
+  padding: 5px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
   border-color: black;
@@ -98,14 +98,14 @@ ul li {
 
 .right {
   text-align: right;
-  border-radius: 20px;
-  background-color: greenyellow;
+  border-radius: 10px;
+  background-color: rgb(227, 220, 220);
 }
 
 .left {
   text-align: left;
-  border-radius: 20px;
-  background-color: lightskyblue;
+  border-radius: 10px;
+  background-color: rgb(171, 218, 247);
 }
 
 .log-out {
@@ -118,4 +118,27 @@ ul li {
 
 .selected {
   background-color: green;
+}
+
+.from-user {
+  position: absolute;
+  right: 0;
+}
+
+.chat-container .chat-input {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 15px;
+  font-size: 16px;
+  outline: none;
+}
+
+.send-button {
+  width: 70px;
+  margin-left: 10px;
+  border-radius: 15px;
+}
+
+.typing {
+  margin-left: 10px;
 }

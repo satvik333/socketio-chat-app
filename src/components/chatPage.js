@@ -12,6 +12,7 @@ function ChatPage({ loggedInUser, socket }) {
   const [toUser, setToUser] = useState(null);
   const [toGroupName, setToGroupName] = useState(null);
   const [groups, setGroups] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesRef = useRef(null);
   const navigate = useNavigate();
 
@@ -44,6 +45,30 @@ function ChatPage({ loggedInUser, socket }) {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  };
+
+  useEffect(() => {
+    const handleTyping = (typingInfo) => {
+      typingInfo.action === 'typing' && typingInfo.from.id !== loggedInUser.id ? setIsTyping(true) : setIsTyping(false);
+    };
+
+    socket.on('typing', handleTyping);
+
+    return () => {
+      socket.off('typing', handleTyping);
+    };
+  }, []);
+
+  const startTyping = () => {
+    let userMessage = payloadCreator();
+    userMessage.action = 'typing';
+    socket.emit('typing', userMessage);
+  };
+
+  const stopTyping = () => {
+    let userMessage = payloadCreator();
+    userMessage.action = 'stoppedTyping';
+    socket.emit('typing', userMessage);
   };
 
   useEffect(() => {
@@ -175,7 +200,9 @@ function ChatPage({ loggedInUser, socket }) {
         </button>
       </div>
       <div className="ChatPage">
+      <h2>To: {toUser?.name || toGroupName}</h2>
         <h2 className="from-user">You: {fromUser?.name}</h2>
+        <h4 className='typing'>{isTyping && 'Typing....'}</h4>
         <div className="line"></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
@@ -188,13 +215,20 @@ function ChatPage({ loggedInUser, socket }) {
             ))}
         </ul>
         <form onSubmit={handleSendMessage}>
+        <div className="chat-container">
           <input
             type="text"
             placeholder="Click here to type"
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
+            onChange={(e) => {
+              setInputMessage(e.target.value);
+              startTyping();
+            }}
+            onBlur={stopTyping}
+            className="chat-input"
           />
-          <button type="submit">Send</button>
+          <button className="send-button" type="submit">Send</button>
+        </div>
         </form>
       </div>
     </div>

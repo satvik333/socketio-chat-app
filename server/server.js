@@ -22,6 +22,48 @@ let userClientsMap = {};
 io.on('connection', (socket) => {
   socket.group_ids = [];
 
+  socket.on('typing', (message) => {
+    let targetUsers = Array.isArray(message.to) ? message.to : [message.to];
+    let sourceUserId = message.from.id;
+
+    if (targetUsers.length === 1) {
+      let userId = targetUsers[0]?.id;
+
+      if (!userId || userId === sourceUserId) return;
+
+      let roomId = [userId, sourceUserId].sort().join('_');
+
+      socket.join(roomId);
+
+      socket.user_ids = socket.user_ids || [];
+      socket.user_ids.push(userId);
+      userClientsMap[userId] = userClientsMap[userId] || { sockets: [], roomId };
+
+      if (!userClientsMap[userId].sockets.some(s => s.id === socket.id)) {
+        userClientsMap[userId].sockets.push(socket);
+      }
+
+      io.to(roomId).emit('typing', message);
+
+    } else {
+      let groupId = message.groupName;
+
+      socket.join(groupId);
+
+      if (!socket.group_ids.includes(groupId)) {
+        socket.group_ids.push(groupId);
+      }
+
+      userClientsMap[groupId] = userClientsMap[groupId] || { sockets: [], roomId: groupId };
+
+      if (!userClientsMap[groupId].sockets.some(s => s.id === socket.id)) {
+        userClientsMap[groupId].sockets.push(socket);
+      }
+
+      io.to(groupId).emit('typing', message);
+    }
+  });
+
   socket.on('chat message', async (message) => {
     let targetUsers = Array.isArray(message.to) ? message.to : [message.to];
     let sourceUserId = message.from.id;
@@ -160,7 +202,7 @@ async function storeMessageInDatabase(roomId, sourceUserId, targetUserId, messag
       [sourceUserId, targetUserId, groupName, message, roomId]
     );
 
-    console.log('Message stored in the database. Insert ID:', result.insertId);
+    //console.log('Message stored in the database. Insert ID:', result.insertId);
   } catch (error) {
     console.error('Error storing message in the database:', error);
     throw error;
