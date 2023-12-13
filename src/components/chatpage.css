@@ -142,3 +142,27 @@ ul li {
 .typing {
   margin-left: 10px;
 }
+
+.avatar {
+  margin-right: 10px;
+}
+
+.user-avatar {
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center; 
+}
+
+.user-avatar {
+  margin-right: 5px;
+}
+
+h2 {
+  font-size: 20px;
+  margin: 10px 0 5px;
+  color: #2c3e50;
+}

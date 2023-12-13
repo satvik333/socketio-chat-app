@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './chatpage.css';
 import { useNavigate } from 'react-router-dom';
 import { getUsers } from '../services/chatService';
+import Avatar from 'react-avatar';
 
 function ChatPage({ loggedInUser, socket }) {
   const [usersArray, setUsersArray] = useState([]);
@@ -183,6 +184,7 @@ function ChatPage({ loggedInUser, socket }) {
         <ul>
           {usersArray.map((user, index) => (
             <li key={index} className={user?.id === toUser?.id ? 'selected' : ''}>
+              <Avatar className='avatar' name={user.name} round={true} size="30" textSizeRatio={1.75} />
               <strong onClick={() => selectUser(user)}>{user.name}</strong>
             </li>
           ))}
@@ -191,6 +193,7 @@ function ChatPage({ loggedInUser, socket }) {
         <ul>
           {usersGroup.map((group, index) => (
             <li key={index} className={toGroupName === group?.name ? 'selected' : ''}>
+              <Avatar className='avatar' name={group.name} round={true} size="30" textSizeRatio={1.75} />
               <strong onClick={() => selectGroup(group)}>{group.name}</strong>
             </li>
           ))}
@@ -200,7 +203,10 @@ function ChatPage({ loggedInUser, socket }) {
         </button>
       </div>
       <div className="ChatPage">
-      <h2>To: {toUser?.name || toGroupName}</h2>
+        <div className="user-info">
+          {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="40" textSizeRatio={1.75} />}
+          <h2>{toUser?.name || toGroupName}</h2>
+        </div>
         <h2 className="from-user">You: {fromUser?.name}</h2>
         <h4 className='typing'>{isTyping && 'Typing....'}</h4>
         <div className="line"></div>
@@ -215,20 +221,20 @@ function ChatPage({ loggedInUser, socket }) {
             ))}
         </ul>
         <form onSubmit={handleSendMessage}>
-        <div className="chat-container">
-          <input
-            type="text"
-            placeholder="Click here to type"
-            value={inputMessage}
-            onChange={(e) => {
-              setInputMessage(e.target.value);
-              startTyping();
-            }}
-            onBlur={stopTyping}
-            className="chat-input"
-          />
-          <button className="send-button" type="submit">Send</button>
-        </div>
+          <div className="chat-container">
+            <input
+              type="text"
+              placeholder="Click here to type"
+              value={inputMessage}
+              onChange={(e) => {
+                setInputMessage(e.target.value);
+                startTyping();
+              }}
+              onBlur={stopTyping}
+              className="chat-input"
+            />
+            <button className="send-button" type="submit">Send</button>
+          </div>
         </form>
       </div>
     </div>
