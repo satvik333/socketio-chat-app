@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import './chatpage.css';
 import { getUsers } from '../services/chatService';
 import Avatar from 'react-avatar';
+import { useNavigate } from 'react-router-dom';
+import CheckIcon from '@mui/icons-material/Check';
+import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
+import DoneAllSharpIcon from '@mui/icons-material/DoneAllSharp';
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -19,6 +23,7 @@ function ChatPage({ loggedInUser, socket }) {
   const [isIdle, setIsIdle] = useState(false);
 
   const messagesRef = useRef(null);
+  const navigate = useNavigate();
 
   const fetchUsersAndGroups = async () => {
     try {
@@ -138,6 +143,7 @@ function ChatPage({ loggedInUser, socket }) {
       messages.forEach((msg) => {
         if (msg?.message) {
           setMessages((prevMessages) => [...prevMessages, msg]);
+          console.log(messages,'mmmmmmmmmmmmmmmm')
         }
       });
     };
@@ -214,6 +220,9 @@ function ChatPage({ loggedInUser, socket }) {
   }
 
   function logOut() {
+    socket.emit('close old connections', accountUser);
+    localStorage.clear();
+    navigate('/login');
     window.location.reload();
   }
 
@@ -256,7 +265,9 @@ function ChatPage({ loggedInUser, socket }) {
               <li key={index} className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
                 <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
                 <br />
-                {msg?.message}
+                {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered  && <CheckIcon/>}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) && <DoneOutlineIcon/>}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon/> : null}
               </li>
             ))}
         </ul>

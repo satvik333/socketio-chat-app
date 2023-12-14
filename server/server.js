@@ -122,13 +122,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('close old connections', () => {
-    console.log(userClientsMap,'1111111111111111111111111')
     closeConnections();
-    console.log(userClientsMap,'2222222222222')
   });
 
   socket.on('get user messages', async (chatInfo) => {
     try {
+      await connection.query(
+        'UPDATE chat_messages SET is_seen = 1 WHERE to_user_id = ?',
+        [chatInfo.from.id]
+      );
+
       const [results] = await connection.execute(
         'SELECT * FROM chat_messages WHERE (from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)',
         [chatInfo.from.id, chatInfo.to.id, chatInfo.to.id, chatInfo.from.id]

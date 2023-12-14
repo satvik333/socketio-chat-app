@@ -23,6 +23,10 @@ router.post('/login', async (req, res) => {
 
     if (results.length > 0) {
       res.status(200).json({ user: results[0] });
+      await connection.query(
+        'UPDATE chat_messages SET is_delivered = 1 WHERE to_user_id = ?',
+        [results[0].id]
+      );
     } else {
       res.status(404).json({ error: 'User not found' });
     }
