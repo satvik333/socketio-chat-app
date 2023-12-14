@@ -128,14 +128,15 @@ io.on('connection', (socket) => {
   socket.on('get user messages', async (chatInfo) => {
     try {
       await connection.query(
-        'UPDATE chat_messages SET is_seen = 1 WHERE to_user_id = ?',
-        [chatInfo.from.id]
+        'UPDATE chat_messages SET is_seen = 1, is_delivered = 1 WHERE to_user_id = ? AND from_user_id = ?',
+        [chatInfo.from.id, chatInfo.to.id]
       );
 
       const [results] = await connection.execute(
         'SELECT * FROM chat_messages WHERE (from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)',
         [chatInfo.from.id, chatInfo.to.id, chatInfo.to.id, chatInfo.from.id]
       );
+      
       socket.emit('messageResponse', results);
     } catch (error) {
       console.error('Error fetching user messages:', error);

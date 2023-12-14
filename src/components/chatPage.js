@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chatpage.css';
-import { getUsers } from '../services/chatService';
+import { getUsers, logOutUser } from '../services/chatService';
 import Avatar from 'react-avatar';
 import { useNavigate } from 'react-router-dom';
 import CheckIcon from '@mui/icons-material/Check';
@@ -219,10 +219,11 @@ function ChatPage({ loggedInUser, socket }) {
     };
   }
 
-  function logOut() {
+  async function logOut() {
     socket.emit('close old connections', accountUser);
     localStorage.clear();
     navigate('/login');
+    await logOutUser(accountUser.id);
     window.location.reload();
   }
 
@@ -266,7 +267,7 @@ function ChatPage({ loggedInUser, socket }) {
                 <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
                 <br />
                 {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered  && <CheckIcon/>}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) && <DoneOutlineIcon/>}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon/> : null}
                 {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon/> : null}
               </li>
             ))}

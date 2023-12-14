@@ -33,4 +33,12 @@ async function checkLoginUser(email) {
   }
 }
 
-export { getUsers, checkLoginUser };
+async function logOutUser(id) {
+  try {
+    await axios.post(`${baseUrl}/logout`, { id: id });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export { getUsers, checkLoginUser, logOutUser };

@@ -24,6 +24,10 @@ router.post('/login', async (req, res) => {
     if (results.length > 0) {
       res.status(200).json({ user: results[0] });
       await connection.query(
+        'UPDATE users SET is_active = 1 WHERE id = ?',
+        [results[0].id]
+      );
+      await connection.query(
         'UPDATE chat_messages SET is_delivered = 1 WHERE to_user_id = ?',
         [results[0].id]
       );
@@ -32,6 +36,17 @@ router.post('/login', async (req, res) => {
     }
   } catch (error) {
     console.error('Error while logging in:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/logout', async (req, res) => {
+  try {
+    await connection.query(
+      'UPDATE users SET is_active = 0 WHERE id = ?',
+      [req.body.id]
+    );
+  } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
