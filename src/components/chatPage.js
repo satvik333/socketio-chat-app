@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './chatpage.css';
-import { useNavigate } from 'react-router-dom';
 import { getUsers } from '../services/chatService';
 import Avatar from 'react-avatar';
 
 function ChatPage({ loggedInUser, socket }) {
+  const storedUser = JSON.parse(localStorage.getItem('accountUser'));
+  const [accountUser, setAccountUser] = useState(storedUser || loggedInUser || null);
   const [usersArray, setUsersArray] = useState([]);
   const [usersGroup, setUsersGroup] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -18,12 +19,10 @@ function ChatPage({ loggedInUser, socket }) {
   const [isIdle, setIsIdle] = useState(false);
 
   const messagesRef = useRef(null);
-  const navigate = useNavigate();
 
   const fetchUsersAndGroups = async () => {
     try {
-      const users = await getUsers();
-      setUsersArray(users);
+      let users = await getUsers();
 
       const updatedGroups = users.reduce((groups, user) => {
         const existingGroup = groups.find((group) => group.name === user.group_id);
@@ -42,10 +41,13 @@ function ChatPage({ loggedInUser, socket }) {
       }, []);
 
       const filteredGroup = updatedGroups.filter((group) => {
-        return group.members.some((member) => member?.id === loggedInUser?.id);
+        return group.members.some((member) => member?.id === accountUser?.id);
       });
 
       setUsersGroup(filteredGroup);
+
+      users = users.filter((user) => user.id !== accountUser.id);
+      setUsersArray(users);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -59,7 +61,7 @@ function ChatPage({ loggedInUser, socket }) {
 
       idleTimer = setTimeout(() => {
         setIsIdle(true);
-        socket.emit('close old connections', loggedInUser);
+        socket.emit('close old connections', accountUser);
       }, 15000); // Adjust the time threshold (in milliseconds) as needed
     };
 
@@ -82,7 +84,7 @@ function ChatPage({ loggedInUser, socket }) {
 
   useEffect(() => {
     const handleTyping = (typingInfo) => {
-      if (typingInfo.action === 'typing' && typingInfo.from.id !== loggedInUser.id) {
+      if (typingInfo.action === 'typing' && typingInfo.from.id !== accountUser.id) {
         setIsTyping(true);
         setTypingUser(typingInfo.from);
       } else {
@@ -115,16 +117,16 @@ function ChatPage({ loggedInUser, socket }) {
   }, []);
 
   useEffect(() => {
-    if (!loggedInUser) {
-      navigate('/login');
+    if (loggedInUser) {
+      localStorage.setItem('accountUser', JSON.stringify(loggedInUser));
     }
   }, [loggedInUser]);
 
   useEffect(() => {
-    setFromUser(loggedInUser);
+    setFromUser(accountUser);
     setGroups((prevGroups) => {
       const filteredGroups = usersGroup.filter((group) => {
-        const isUserInGroup = group.members.some((member) => Number(member.id) === Number(loggedInUser.id));
+        const isUserInGroup = group.members.some((member) => Number(member.id) === Number(accountUser.id));
         return isUserInGroup;
       });
       return filteredGroups;
@@ -180,7 +182,7 @@ function ChatPage({ loggedInUser, socket }) {
     socket.emit('close old connections');
     let chatInfo = {
       to: user,
-      from: loggedInUser,
+      from: accountUser,
     }
     socket.emit('get user messages', chatInfo);
   }
@@ -192,7 +194,7 @@ function ChatPage({ loggedInUser, socket }) {
     socket.emit('close old connections');
     let chatInfo = {
       to: group.name,
-      from: loggedInUser,
+      from: accountUser,
     }
     socket.emit('get group messages', chatInfo);
   }
@@ -245,14 +247,14 @@ function ChatPage({ loggedInUser, socket }) {
           {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="40" textSizeRatio={1.75} />}
           <h2>{toUser?.name || toGroupName}</h2>
         </div>
-        <h2 className="from-user">You: <Avatar className='from-user-avatar' name={loggedInUser?.name} round={true} size="40" textSizeRatio={1.75} />{fromUser?.name}</h2>
+        <h2 className="from-user">You: <Avatar className='from-user-avatar' name={accountUser?.name} round={true} size="40" textSizeRatio={1.75} />{fromUser?.name}</h2>
         {toGroupName && isTyping && (<h4 className='typing'>{`${typingUser?.name} is typing....`}</h4>)}
         {!toGroupName && isTyping && (<h4 className='typing'>Typing....</h4>)}
         <ul className="message-box" ref={messagesRef}>
           {messages &&
             messages.map((msg, index) => (
-              <li key={index} className={msg?.from?.id === loggedInUser.id || msg?.from_user_id === loggedInUser.id ? 'right' : 'left'}>
-                <strong>{(msg?.from?.email !== loggedInUser.email && toGroupName) && msg?.from?.name || (loggedInUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
+              <li key={index} className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
+                <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
                 <br />
                 {msg?.message}
               </li>
