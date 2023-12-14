@@ -81,6 +81,21 @@ io.on('connection', (socket) => {
 
       socket.join(roomId);
 
+      let [result] = await connection.execute(
+        'SELECT is_active from users WHERE id = ?',
+        [userId]
+      );
+  
+      let userIsActive = result[0].is_active;
+  
+      if (userIsActive) {
+        message.is_delivered = true;
+        await connection.execute(
+          'UPDATE chat_messages SET is_delivered = 1 WHERE to_user_id = ?',
+          [userId]
+        );
+      }
+
       emitMessageToIndividual(userId, roomId, message);
 
       if (message.message) {
@@ -136,7 +151,7 @@ io.on('connection', (socket) => {
         'SELECT * FROM chat_messages WHERE (from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)',
         [chatInfo.from.id, chatInfo.to.id, chatInfo.to.id, chatInfo.from.id]
       );
-      
+
       socket.emit('messageResponse', results);
     } catch (error) {
       console.error('Error fetching user messages:', error);
@@ -207,7 +222,7 @@ server.listen(PORT, () => {
 
 async function storeMessageInDatabase(roomId, sourceUserId, targetUserId, message, groupName = null) {
   try {
-    const [result] = await connection.query(
+    await connection.query(
       'INSERT INTO chat_messages (from_user_id, to_user_id, group_name, message, room_id) VALUES (?, ?, ?, ?, ?)',
       [sourceUserId, targetUserId, groupName, message, roomId]
     );

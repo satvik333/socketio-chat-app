@@ -223,7 +223,7 @@ function ChatPage({ loggedInUser, socket }) {
     socket.emit('close old connections', accountUser);
     localStorage.clear();
     navigate('/login');
-    await logOutUser(accountUser.id);
+    await logOutUser(accountUser?.id);
     window.location.reload();
   }
 
