@@ -235,7 +235,7 @@ function ChatPage({ loggedInUser, socket }) {
     <AppBar loggedInUser={accountUser}/>
     <div className="App">
       <div className="UsersList">
-        <h3 style={{ marginLeft: '7px' }}>Users</h3>
+        <h3 style={{ marginLeft: '130px', textDecoration: 'underline' }}>Users</h3>
         <ul>
           {usersArray.map((user, index) => (
             <li onClick={() => selectUser(user)} key={index} className={user?.id === toUser?.id ? 'selected' : 'chat-list'}>
@@ -244,7 +244,7 @@ function ChatPage({ loggedInUser, socket }) {
             </li>
           ))}
         </ul>
-        <h3 style={{ marginLeft: '7px' }}>Groups</h3>
+        <h3 style={{ marginLeft: '130px', textDecoration: 'underline' }}>Groups</h3>
         <ul>
           {usersGroup.map((group, index) => (
             <li onClick={() => selectGroup(group)} key={index} className={toGroupName === group?.name ? 'selected' : 'chat-list'}>
@@ -265,6 +265,7 @@ function ChatPage({ loggedInUser, socket }) {
         </div>
         {toGroupName && isTyping && (<h4 className='typing'>{`${typingUser?.name} is typing....`}</h4>)}
         {!toGroupName && isTyping && (<h4 className='typing'>Typing....</h4>)}
+        <div className='line'></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
             messages.map((msg, index) => (
