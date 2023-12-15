@@ -9,13 +9,13 @@ function KaptureAppBar({ loggedInUser }) {
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#e03038', height: '50px' }}>
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ display: 'flex' }}>
         <Toolbar disableGutters>
-          <Typography variant="h4" component="h4" sx={{ color: 'white' }}>
+          <Typography variant="h4" component="h4" sx={{ color: 'white', pb: 2, marginLeft: '-48px' }}>
             Kapture Internal Chat
           </Typography>
-          <Typography variant="h6" component="h6" sx={{ color: 'white', pl: 106 }}>
-            LoggedIn As: <Avatar name={loggedInUser?.name} round={true} size="35" textSizeRatio={1.75} /><span style={{paddingLeft: '5px'}}>{loggedInUser?.name}</span>
+          <Typography variant="h6" component="h6" sx={{ color: 'white', pb: 2, marginLeft: '890px' }}>
+            LoggedIn As : <Avatar name={loggedInUser?.name} round={true} size="35" textSizeRatio={1.75} /><span style={{ paddingLeft: '5px' }}>{loggedInUser?.name}</span>
           </Typography>
         </Toolbar>
       </Container>

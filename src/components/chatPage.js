@@ -8,6 +8,7 @@ import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import DoneAllSharpIcon from '@mui/icons-material/DoneAllSharp';
 import Home from './homePage';
 import AppBar from './appBar';
+import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -234,21 +235,21 @@ function ChatPage({ loggedInUser, socket }) {
     <AppBar loggedInUser={accountUser}/>
     <div className="App">
       <div className="UsersList">
-        <h2>Users</h2>
+        <h3 style={{ marginLeft: '7px' }}>Users</h3>
         <ul>
           {usersArray.map((user, index) => (
-            <li key={index} className={user?.id === toUser?.id ? 'selected' : ''}>
+            <li onClick={() => selectUser(user)} key={index} className={user?.id === toUser?.id ? 'selected' : 'chat-list'}>
               <Avatar className='avatar' name={user.name} round={true} size="30" textSizeRatio={1.75} />
-              <strong onClick={() => selectUser(user)}>{user.name}</strong>
+              <strong>{user.name}</strong>
             </li>
           ))}
         </ul>
-        <h2>Groups</h2>
+        <h3 style={{ marginLeft: '7px' }}>Groups</h3>
         <ul>
           {usersGroup.map((group, index) => (
-            <li key={index} className={toGroupName === group?.name ? 'selected' : ''}>
+            <li onClick={() => selectGroup(group)} key={index} className={toGroupName === group?.name ? 'selected' : 'chat-list'}>
               <Avatar className='avatar' name={group.name} round={true} size="30" textSizeRatio={1.75} />
-              <strong onClick={() => selectGroup(group)}>{group.name}</strong>
+              <strong>{group.name}</strong>
             </li>
           ))}
         </ul>
@@ -259,8 +260,8 @@ function ChatPage({ loggedInUser, socket }) {
       {(!toUser && !toGroupName) && <Home loggedInUser={accountUser}/>}
       {(toUser || toGroupName) && <div className="ChatPage">
         <div className="user-info">
-          {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="38" textSizeRatio={1.75} />}
-          <h2 className='to-user'>{toUser?.name || toGroupName}</h2>
+          {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="30" textSizeRatio={1.75} />}
+          <h3 className='to-user'>{toUser?.name || toGroupName}</h3>
         </div>
         {toGroupName && isTyping && (<h4 className='typing'>{`${typingUser?.name} is typing....`}</h4>)}
         {!toGroupName && isTyping && (<h4 className='typing'>Typing....</h4>)}
@@ -289,7 +290,7 @@ function ChatPage({ loggedInUser, socket }) {
               onBlur={stopTyping}
               className="chat-input"
             />
-            <button className="send-button" type="submit">Send</button>
+            <button className="send-button" type="submit"> <SendTwoToneIcon style={{ fontSize: 25, color: 'black' }}/></button>
           </div>
         </form>
       </div>}
