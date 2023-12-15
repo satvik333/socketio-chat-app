@@ -1,0 +1,18 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-page h1 {
+  text-align: center;
+  padding-top: 200px;
+  padding-left: 400px;
+}
+
+.home-page p {
+    text-align: center;
+    padding-bottom: 400px;
+    padding-left: 400px;
+}
