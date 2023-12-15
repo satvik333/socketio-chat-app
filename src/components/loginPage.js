@@ -32,6 +32,7 @@ function LoginPage({ onLogin }) {
 
   return (
     <form onSubmit={handleSubmit}>
+      <h1 style={{ backgroundColor: 'e03038', color: 'white' }}>Kapture Chat Application</h1>
       <label>
         Username:
         <input type="text" value={username} onChange={handleUsernameChange} />

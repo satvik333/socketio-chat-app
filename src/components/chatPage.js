@@ -7,6 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import DoneAllSharpIcon from '@mui/icons-material/DoneAllSharp';
 import Home from './homePage';
+import AppBar from './appBar';
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -229,6 +230,8 @@ function ChatPage({ loggedInUser, socket }) {
   }
 
   return (
+    <>
+    <AppBar loggedInUser={accountUser}/>
     <div className="App">
       <div className="UsersList">
         <h2>Users</h2>
@@ -256,10 +259,9 @@ function ChatPage({ loggedInUser, socket }) {
       {(!toUser && !toGroupName) && <Home loggedInUser={accountUser}/>}
       {(toUser || toGroupName) && <div className="ChatPage">
         <div className="user-info">
-          {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="40" textSizeRatio={1.75} />}
+          {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="38" textSizeRatio={1.75} />}
           <h2 className='to-user'>{toUser?.name || toGroupName}</h2>
         </div>
-        <h2 className="from-user">LoggedIn As: <Avatar className='from-user-avatar' name={accountUser?.name} round={true} size="40" textSizeRatio={1.75} />{fromUser?.name}</h2>
         {toGroupName && isTyping && (<h4 className='typing'>{`${typingUser?.name} is typing....`}</h4>)}
         {!toGroupName && isTyping && (<h4 className='typing'>Typing....</h4>)}
         <ul className="message-box" ref={messagesRef}>
@@ -274,7 +276,6 @@ function ChatPage({ loggedInUser, socket }) {
               </li>
             ))}
         </ul>
-        <div className="line"></div>
         <form onSubmit={handleSendMessage}>
           <div className="chat-container">
             <input
@@ -293,6 +294,7 @@ function ChatPage({ loggedInUser, socket }) {
         </form>
       </div>}
     </div>
+    </>
   );
 }
 

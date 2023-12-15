@@ -2,12 +2,12 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f0f0f0;
+  background-color: white;
 }
 
 .App {
   display: flex;
-  height: 100vh;
+  height: 93vh;
 }
 
 .UsersList,
@@ -47,11 +47,12 @@ ul li {
   padding: 10px;
   margin: 10px;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: white;
   flex: 1;
   overflow-y: auto;
   padding-top: 20px;
   margin-bottom: 0;
+  max-height: 550px;
 }
 
 
@@ -149,14 +150,11 @@ ul li {
 .user-info {
   display: flex;
   align-items: center;
+  max-height: 40px;
+  padding-bottom: 5px;
 }
 
 .user-avatar {
-  margin-right: 5px;
-}
-
-
-.from-user-avatar {
   margin-right: 5px;
 }
 
