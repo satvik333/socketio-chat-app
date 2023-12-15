@@ -9,6 +9,8 @@ import DoneAllSharpIcon from '@mui/icons-material/DoneAllSharp';
 import Home from './homePage';
 import AppBar from './appBar';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { func } from 'prop-types';
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -230,6 +232,10 @@ function ChatPage({ loggedInUser, socket }) {
     window.location.reload();
   }
 
+  function goToHome() {
+    window.location.reload();
+  }
+
   return (
     <>
     <AppBar loggedInUser={accountUser}/>
@@ -260,6 +266,7 @@ function ChatPage({ loggedInUser, socket }) {
       {(!toUser && !toGroupName) && <Home loggedInUser={accountUser}/>}
       {(toUser || toGroupName) && <div className="ChatPage">
         <div className="user-info">
+          <ArrowBackIcon onClick={() => goToHome()} style={{paddingTop: 12, paddingRight: 20}}/>
           {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="30" textSizeRatio={1.75} />}
           <h3 className='to-user'>{toUser?.name || toGroupName}</h3>
         </div>
