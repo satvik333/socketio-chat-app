@@ -10,7 +10,7 @@ import Home from './homePage';
 import AppBar from './appBar';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { func } from 'prop-types';
+import { TypeAnimation } from 'react-type-animation';
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -212,6 +212,7 @@ function ChatPage({ loggedInUser, socket }) {
 
   function clearMessages() {
     setMessages([]);
+    setInputMessage('');
   }
 
   function payloadCreator() {
@@ -235,6 +236,27 @@ function ChatPage({ loggedInUser, socket }) {
   function goToHome() {
     window.location.reload();
   }
+
+  const renderTypingAnimation = (text, fontSize, marginLeft) => (
+    <TypeAnimation
+      sequence={[
+        `${text} .`,
+        800,
+        `${text} . .`,
+        800,
+        `${text} . . .`,
+        800,
+        `${text} . . . .`,
+        800
+      ]}
+      wrapper="span"
+      speed={75}
+      cursor={false}
+      style={{ fontSize, display: 'inline-block', marginLeft }}
+      repeat={Infinity}
+    />
+  );
+  
 
   return (
     <>
@@ -270,8 +292,6 @@ function ChatPage({ loggedInUser, socket }) {
           {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="30" textSizeRatio={1.75} />}
           <h3 className='to-user'>{toUser?.name || toGroupName}</h3>
         </div>
-        {toGroupName && isTyping && (<h4 className='typing'>{`${typingUser?.name} is typing....`}</h4>)}
-        {!toGroupName && isTyping && (<h4 className='typing'>Typing....</h4>)}
         <div className='line'></div>
         <ul className="message-box" ref={messagesRef}>
           {messages &&
@@ -286,6 +306,10 @@ function ChatPage({ loggedInUser, socket }) {
             ))}
         </ul>
         <form onSubmit={handleSendMessage}>
+          <>
+            {!toGroupName && isTyping && renderTypingAnimation('', '3em', '-200px')}
+            {toGroupName && isTyping && renderTypingAnimation(typingUser?.name, '1.5em', '-170px')}
+          </>
           <div className="chat-container">
             <input
               type="text"

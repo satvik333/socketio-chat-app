@@ -90,17 +90,17 @@ ul li {
 }
 
 .right {
-  text-align: right;
-  border-radius: 10px;
+  text-align: end;
+  border-radius: 20px;
   background-color: #a8c7fa;
-  padding-right: 10px;
+  max-width: fit-content;
 }
 
 .left {
   text-align: left;
   background-color: rgb(247, 243, 243);
   max-width: fit-content;
-  border-radius: 50px;
+  border-radius: 20px;
 }
 
 .log-out {
