@@ -240,14 +240,14 @@ function ChatPage({ loggedInUser, socket }) {
   const renderTypingAnimation = (text, fontSize, marginLeft) => (
     <TypeAnimation
       sequence={[
-        `${text} .`,
-        800,
-        `${text} . .`,
-        800,
-        `${text} . . .`,
-        800,
-        `${text} . . . .`,
-        800
+        `${text}.`,
+        500,
+        `${text}..`,
+        500,
+        `${text}...`,
+        500,
+        `${text}....`,
+        500
       ]}
       wrapper="span"
       speed={75}
@@ -294,21 +294,21 @@ function ChatPage({ loggedInUser, socket }) {
         </div>
         <div className='line'></div>
         <ul className="message-box" ref={messagesRef}>
-          {messages &&
-            messages.map((msg, index) => (
-              <li key={index} className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
-                <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
-                <br />
-                {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered  && <CheckIcon/>}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon/> : null}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon/> : null}
-              </li>
-            ))}
+        {messages &&
+          messages.map((msg, index) => (
+            <li key={index} className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
+              <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
+              <span>{msg?.message}</span>
+                {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered  && <CheckIcon className='status-icons'/>}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons'/> : null}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons'/> : null}
+            </li>
+          ))}
         </ul>
         <form onSubmit={handleSendMessage}>
           <>
             {!toGroupName && isTyping && renderTypingAnimation('', '3em', '-200px')}
-            {toGroupName && isTyping && renderTypingAnimation(typingUser?.name, '1.5em', '-170px')}
+            {toGroupName && isTyping && renderTypingAnimation(typingUser?.name, '1.25em', '-170px')}
           </>
           <div className="chat-container">
             <input

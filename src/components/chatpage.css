@@ -91,17 +91,21 @@ ul li {
 
 .message-box .right {
   text-align: end;
-  border-radius: 20px;
+  border-radius: 10px;
   background-color: #a8c7fa;
   max-width: fit-content;
   margin-left: auto;
+  padding: 15px;
+  display: flex;
 }
 
 .left {
   text-align: left;
   background-color: rgb(247, 243, 243);
   max-width: fit-content;
-  border-radius: 15px;
+  border-radius: 10px;
+  display: flex;
+  padding: 15px;
 }
 
 .log-out {
@@ -184,4 +188,9 @@ ul li {
 
 .chat-list:hover {
   background-color: silver;
+}
+
+.right .status-icons {
+  margin-left: 8px;
+  margin-top: 8px;
 }
