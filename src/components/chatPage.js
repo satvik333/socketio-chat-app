@@ -11,6 +11,7 @@ import AppBar from './appBar';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { TypeAnimation } from 'react-type-animation';
+const moment = require('moment');
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -297,11 +298,16 @@ function ChatPage({ loggedInUser, socket }) {
         {messages &&
           messages.map((msg, index) => (
             <li key={index} className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
-              <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
-              <span>{msg?.message}</span>
-                {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered  && <CheckIcon className='status-icons'/>}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons'/> : null}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons'/> : null}
+              <div>
+                <span>({moment(msg?.timestamp).format('DD MMM YYYY H:mm')})</span>
+              </div>
+              <div>
+                <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
+                <span>{msg?.message}</span>
+                {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons' /> : null}
+              </div>
             </li>
           ))}
         </ul>

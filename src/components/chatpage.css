@@ -27,7 +27,6 @@ ul li {
   padding: 5px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
-  border-color: black;
 }
 
 
@@ -97,6 +96,7 @@ ul li {
   margin-left: auto;
   padding: 15px;
   display: flex;
+  flex-direction: column;
 }
 
 .left {
@@ -106,6 +106,7 @@ ul li {
   border-radius: 10px;
   display: flex;
   padding: 15px;
+  flex-direction: column;
 }
 
 .log-out {
