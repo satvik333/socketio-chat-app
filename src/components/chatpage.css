@@ -23,7 +23,7 @@ ul {
   padding: 0;
 }
 
-ul li {
+.UsersList ul li {
   padding: 5px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
@@ -97,6 +97,15 @@ ul li {
   padding: 15px;
   display: flex;
   flex-direction: column;
+}
+
+.sender-date {
+  text-align: end;
+  padding-bottom: 15px;
+}
+
+.receiver-date {
+  padding-bottom: 15px;
 }
 
 .left {

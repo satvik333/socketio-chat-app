@@ -295,22 +295,24 @@ function ChatPage({ loggedInUser, socket }) {
         </div>
         <div className='line'></div>
         <ul className="message-box" ref={messagesRef}>
-        {messages &&
-          messages.map((msg, index) => (
-            <li key={index} className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
-              <div>
-                <span>({moment(msg?.timestamp).format('DD MMM YYYY H:mm')})</span>
-              </div>
-              <div>
-                <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && `${msg?.user_name}:`}</strong>
-                {toGroupName && <br/>}
-                <span>{msg?.message}</span>
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
-                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons' /> : null}
-              </div>
-            </li>
-          ))}
+          {messages &&
+            messages.map((msg, index) => (
+              <React.Fragment key={index}>
+                <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
+                  <div>
+                    <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && `${msg?.user_name}:`}</strong>
+                    {toGroupName && <br/>}
+                    <span>{msg?.message}</span>
+                    {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
+                    {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
+                    {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons' /> : null}
+                  </div>
+                </li>
+                <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'sender-date' : 'receiver-date'}>
+                  <span>{moment(msg?.timestamp).format('DD MMM YYYY H:mm')}</span>
+                </li>
+              </React.Fragment>
+            ))}
         </ul>
         <form onSubmit={handleSendMessage}>
           <>
