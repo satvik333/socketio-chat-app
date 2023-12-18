@@ -302,9 +302,10 @@ function ChatPage({ loggedInUser, socket }) {
                 <span>({moment(msg?.timestamp).format('DD MMM YYYY H:mm')})</span>
               </div>
               <div>
-                <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && msg?.user_name}</strong>
+                <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && `${msg?.user_name}:`}</strong>
+                {toGroupName && <br/>}
                 <span>{msg?.message}</span>
-                {msg?.message} {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
+                {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
                 {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
                 {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons' /> : null}
               </div>
