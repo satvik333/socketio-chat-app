@@ -97,6 +97,12 @@ ul {
   padding: 15px;
   display: flex;
   flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+
+.message-box li {
+  position: relative;
 }
 
 .sender-date {
@@ -200,7 +206,8 @@ ul {
   background-color: silver;
 }
 
-.right .status-icons {
-  margin-left: 8px;
-  margin-top: 8px;
+.status-icons {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
