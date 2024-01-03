@@ -274,7 +274,7 @@ function ChatPage({ loggedInUser, socket }) {
           ))}
         </ul>
         <h3 style={{ marginLeft: '130px', textDecoration: 'underline' }}>Groups</h3>
-        <ul>
+        <ul style={{marginBottom: '50px'}}>
           {usersGroup.map((group, index) => (
             <li onClick={() => selectGroup(group)} key={index} className={toGroupName === group?.name ? 'selected' : 'chat-list'}>
               <Avatar className='avatar' name={group.name} round={true} size="30" textSizeRatio={1.75} />
