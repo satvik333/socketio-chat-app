@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: [`${configParams.appEnv}:3000`, `${configParams.appEnv}:3001`, 'http://172.16.0.165:3000'],
+    origin: [`${configParams.appEnv}:3000`, `${configParams.appEnv}:3001`, 'http://172.16.0.132:3000'],
     methods: ['GET', 'POST'],
     credentials: true,
   },

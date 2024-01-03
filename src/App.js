@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import socketIO from 'socket.io-client';
 
 function App() {
-  const socket = socketIO.connect('http://172.16.0.165:3001');
+  const socket = socketIO.connect('http://172.16.0.132:3001');
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   const handleLogin = (user) => {

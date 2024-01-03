@@ -149,7 +149,6 @@ function ChatPage({ loggedInUser, socket }) {
       messages.forEach((msg) => {
         if (msg?.message) {
           setMessages((prevMessages) => [...prevMessages, msg]);
-          console.log(messages,'mmmmmmmmmmmmmmmm')
         }
       });
     };
@@ -257,6 +256,13 @@ function ChatPage({ loggedInUser, socket }) {
       repeat={Infinity}
     />
   );
+
+  function canDisplayName(msg) {
+    return (
+      (msg?.from?.id !== accountUser.id && toGroupName && msg?.from?.name) ||
+      (accountUser.id !== msg?.from_user_id && toGroupName)
+    );
+  }
   
 
   return (
@@ -300,8 +306,7 @@ function ChatPage({ loggedInUser, socket }) {
               <React.Fragment key={index}>
                 <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
                   <div>
-                    <strong>{(msg?.from?.email !== accountUser.email && toGroupName) && msg?.from?.name || (accountUser.id !== msg?.from_user_id && toGroupName) && `${msg?.user_name}:`}</strong>
-                    {toGroupName && <br/>}
+                    {canDisplayName(msg) ? <strong style={{display: 'block'}}>{msg?.user_name}</strong> : null}
                     <span>{msg?.message}</span>
                     {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
                     {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
