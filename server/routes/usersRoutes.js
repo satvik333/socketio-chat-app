@@ -8,7 +8,7 @@ router.use(express.json());
 
 router.get('/users', async (req, res) => {
   try {
-    const [results] = await connection.execute('SELECT * FROM users');
+    const [results] = await connection.execute('SELECT * FROM socket_users');
     res.status(200).json(results);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -19,12 +19,12 @@ router.get('/users', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const email = req.body.email;
-    const [results] = await connection.execute('SELECT * FROM users WHERE email = ?', [email]);
+    const [results] = await connection.execute('SELECT * FROM socket_users WHERE email = ?', [email]);
 
     if (results.length > 0) {
       res.status(200).json({ user: results[0] });
       await connection.query(
-        'UPDATE users SET is_active = 1 WHERE id = ?',
+        'UPDATE socket_users SET is_active = 1 WHERE id = ?',
         [results[0].id]
       );
       await connection.query(
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', async (req, res) => {
   try {
     await connection.query(
-      'UPDATE users SET is_active = 0 WHERE id = ?',
+      'UPDATE socket_users SET is_active = 0 WHERE id = ?',
       [req.body.id]
     );
   } catch (error) {

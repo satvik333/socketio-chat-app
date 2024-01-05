@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
       socket.join(roomId);
 
       let [result] = await connection.execute(
-        'SELECT is_active from users WHERE id = ?',
+        'SELECT is_active from socket_users WHERE id = ?',
         [userId]
       );
   
@@ -161,7 +161,7 @@ io.on('connection', (socket) => {
   socket.on('get group messages', async (chatInfo) => {
     try {
       const [results] = await connection.execute(
-        'SELECT cm.*, u.* FROM chat_messages cm JOIN users u ON cm.from_user_id = u.id WHERE cm.group_name = ?',
+        'SELECT cm.*, u.* FROM chat_messages cm JOIN socket_users u ON cm.from_user_id = u.id WHERE cm.group_name = ?',
         [chatInfo.to]
       );
       socket.emit('messageResponse', results);
