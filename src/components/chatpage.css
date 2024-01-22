@@ -52,7 +52,7 @@ ul {
   margin-bottom: 0;
   max-height: 550px;
   max-width: 600px;
-  padding-left: 250px;
+  padding-left: 400px;
 }
 
 
@@ -129,7 +129,7 @@ ul {
   bottom: 0;
   left: 0;
   background-color: #e03038;
-  width: 22%;
+  width: 18%;
 }
 
 .selected {

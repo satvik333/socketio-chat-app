@@ -295,7 +295,7 @@ function ChatPage({ loggedInUser, socket }) {
       {(!toUser && !toGroupName) && <Home loggedInUser={accountUser}/>}
       {(toUser || toGroupName) && <div className="ChatPage">
         <div className="user-info">
-          <ArrowBackIcon onClick={() => goToHome()} style={{paddingTop: 12, paddingRight: 20}}/>
+          <ArrowBackIcon onClick={() => goToHome()} style={{paddingTop: 12, paddingRight: 20, cursor: 'pointer'}}/>
           {toUser && <Avatar className='user-avatar' name={toUser?.name || toGroupName} round={true} size="30" textSizeRatio={1.75} />}
           <h3 className='to-user'>{toUser?.name || toGroupName}</h3>
         </div>
@@ -306,7 +306,7 @@ function ChatPage({ loggedInUser, socket }) {
               <React.Fragment key={index}>
                 <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
                   <div>
-                    {canDisplayName(msg) ? <strong style={{display: 'block'}}>{msg?.user_name}</strong> : null}
+                    {canDisplayName(msg) ? <strong style={{display: 'block'}}>{msg?.user_name}:</strong> : null}
                     <span>{msg?.message}</span>
                     {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
                     {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
