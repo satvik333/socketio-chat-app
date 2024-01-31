@@ -23,8 +23,7 @@ pipelines:
           deployment: production
           script:
             - echo "Deploying..."
-            # - tar -cvf ../build_${BITBUCKET_BUILD_NUMBER}.tar .
-            - cd build && tar -cvf ../build_${BITBUCKET_BUILD_NUMBER}.tar . && cd ..
+            - tar -cvf ../build_${BITBUCKET_BUILD_NUMBER}.tar .
             - pipe: atlassian/scp-deploy:0.3.3
               variables:
                 USER: $SERVER_USER
