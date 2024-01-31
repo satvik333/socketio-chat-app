@@ -30,7 +30,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"npm run start:react\" \"npm run start:node\"",
+    "start": "concurrently DISABLE_ESLINT_PLUGIN=true \"npm run start:react\" \"npm run start:node\"",
     "start:react": "react-scripts start",
     "start:node": "nodemon server/server.js",
     "build": "react-scripts build",
