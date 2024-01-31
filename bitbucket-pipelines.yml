@@ -9,11 +9,12 @@ pipelines:
           name: "PRODUCTION - Test & Build"
           size: 2x
           caches:
-            - nodemodule
+            - node
           script:
             - echo "Installing packages...."
             - npm install
             - echo "Running build scripts...."
+            - SKIP_ESLINT=true npm test 
             - npm run build
             - echo "Build complete."
       - step:
