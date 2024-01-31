@@ -4,7 +4,7 @@ image: node:16.13.0
 
 pipelines:
   branches:
-    nui:
+    main:
       - step:
           name: "PRODUCTION - Test & Build"
           size: 2x
