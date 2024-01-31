@@ -1,0 +1,33 @@
+image: node:16.13.0
+
+# Workflow Configuration
+
+pipelines:
+  branches:
+    nui:
+      - step:
+          name: "PRODUCTION - Test & Build"
+          size: 2x
+          caches:
+            - nodemodule
+          script:
+            - echo "Installing packages...."
+            - npm install
+            - echo "Running build scripts...."
+            - npm run build
+            - echo "Build complete."
+      - step:
+          name: "PRODUCTION - Deploy"
+          deployment: production
+          script:
+            - echo "Deploying..."
+            - tar -cvf ../build_${BITBUCKET_BUILD_NUMBER}.tar .
+            - pipe: atlassian/scp-deploy:0.3.3
+              variables:
+                USER: $SERVER_USER
+                SERVER: $SERVER_HOST
+                REMOTE_PATH: "${SERVER_ROOT}"
+                LOCAL_PATH: build_${BITBUCKET_BUILD_NUMBER}.tar
+                DEBUG: "true"
+            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar"
+            - echo "Project Clean Deployed to Server 1 Successfully....."
