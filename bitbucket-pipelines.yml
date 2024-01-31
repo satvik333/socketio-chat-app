@@ -1,7 +1,6 @@
 image: node:16.13.0
 
 # Workflow Configuration
-
 pipelines:
   branches:
     main:
@@ -24,6 +23,7 @@ pipelines:
           script:
             - echo "Deploying..."
             - tar -cvf ../build_${BITBUCKET_BUILD_NUMBER}.tar .
+            - ls -l  # List the contents of the current directory
             - pipe: atlassian/scp-deploy:0.3.3
               variables:
                 USER: $SERVER_USER
