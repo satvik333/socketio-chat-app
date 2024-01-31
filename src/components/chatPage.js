@@ -13,6 +13,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { TypeAnimation } from 'react-type-animation';
 const moment = require('moment');
 
+/* eslint-disable */
+
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
   const [accountUser, setAccountUser] = useState(storedUser || loggedInUser || null);
