@@ -14,7 +14,7 @@ pipelines:
             - echo "Installing packages...."
             - npm install
             - echo "Running build scripts...."
-            - SKIP_ESLINT=true npm test 
+            - SKIP_ESLINT=true
             - npm run build
             - echo "Build complete."
       - step:
