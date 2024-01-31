@@ -12,6 +12,7 @@ pipelines:
             - node
           script:
             - echo "Installing packages...."
+            - npm install --save-dev @babel/plugin-proposal-private-property-in-object
             - npm install
             - echo "Running build scripts...."
             - SKIP_ESLINT=true
