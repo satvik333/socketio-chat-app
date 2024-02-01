@@ -29,5 +29,9 @@ pipelines:
                 REMOTE_PATH: "${SERVER_ROOT}"
                 LOCAL_PATH: build_${BITBUCKET_BUILD_NUMBER}.tar
                 DEBUG: "true"
-            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && cd web_chat_socket && npm install && npm start"
+            - if [ "$CI" = "true" ]; then
+                ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && cd web_chat_socket && npm install && npm start";
+              else
+                echo "Skipping test-related steps in local environment.";
+              fi
             - echo "Project Clean Deployed to Server 1 Successfully."
