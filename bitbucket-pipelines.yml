@@ -18,8 +18,7 @@ pipelines:
             - echo "Build complete."
 
       - step:
-          name: "PRODUCTION - Deploy"
-          deployment: production
+          name: "PRODUCTION - Deploy & Start WebSocket App"
           script:
             - echo "Deploying..."
             - tar -cvf build_${BITBUCKET_BUILD_NUMBER}.tar .
@@ -30,12 +29,5 @@ pipelines:
                 REMOTE_PATH: "${SERVER_ROOT}"
                 LOCAL_PATH: build_${BITBUCKET_BUILD_NUMBER}.tar
                 DEBUG: "true"
-            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar"
-            - echo "Project Clean Deployed to Server 1 Successfully....."
-
-      - step:
-          name: "PRODUCTION - Start WebSocket App"
-          deployment: production
-          script:
-            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}/web_chat_socket' && npm install && npm start"
-            - echo "WebSocket App started successfully."
+            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && cd web_chat_socket && npm install && npm start"
+            - echo "Project Clean Deployed to Server 1 Successfully."
