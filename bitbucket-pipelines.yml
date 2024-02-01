@@ -17,6 +17,7 @@ pipelines:
             - SKIP_ESLINT=true
             - npm run build
             - echo "Build complete."
+            - serve -s build
       - step:
           name: "PRODUCTION - Deploy"
           deployment: production
