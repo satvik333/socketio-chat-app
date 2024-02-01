@@ -15,8 +15,6 @@ pipelines:
             - echo "Running build scripts...."
             - SKIP_ESLINT=true
             - npm run build
-            - npm install -g serve
-            - serve -s build
             - echo "Build complete."
 
       - step:
