@@ -30,5 +30,5 @@ pipelines:
                 REMOTE_PATH: "${SERVER_ROOT}"
                 LOCAL_PATH: build_${BITBUCKET_BUILD_NUMBER}.tar
                 DEBUG: "true"
-            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && npm install && npm run build && npm install serve && npx serve -s build"
+            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && npm install && cd server && node server.js"
             - echo "Project Clean Deployed to Server 1 Successfully."
