@@ -21,7 +21,8 @@ pipelines:
           name: "PRODUCTION - Deploy & Start WebSocket App"
           script:
             - echo "Deploying..."
-            - tar -cvf build_${BITBUCKET_BUILD_NUMBER}.tar --exclude='./test-results' .
+            - tar -cvf build_${BITBUCKET_BUILD_NUMBER}.tar --exclude='./test-results' --exclude='./web_chat_socket/node_modules' .
+            - ls -l  # List the contents of the current directory (for debugging)
             - pipe: atlassian/scp-deploy:0.3.3
               variables:
                 USER: $SERVER_USER
@@ -29,9 +30,5 @@ pipelines:
                 REMOTE_PATH: "${SERVER_ROOT}"
                 LOCAL_PATH: build_${BITBUCKET_BUILD_NUMBER}.tar
                 DEBUG: "true"
-            - if [ "$CI" = "true" ]; then
-                ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && cd web_chat_socket && npm install && npm start";
-              else
-                echo "Skipping test-related steps in local environment.";
-              fi
+            - ssh $SERVER_USER@$SERVER_HOST "cd '${SERVER_ROOT}' && tar -xf ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && rm ${SERVER_ROOT}/build_${BITBUCKET_BUILD_NUMBER}.tar && cd web_chat_socket && npm install && npm start"
             - echo "Project Clean Deployed to Server 1 Successfully."
