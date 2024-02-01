@@ -54,7 +54,6 @@
     ]
   },
   "devDependencies": {
-    "nodemon": "^3.0.3",
-    "@babel/plugin-proposal-private-property-in-object": "^1.0.6"
+    "nodemon": "^3.0.3"
   }
 }
