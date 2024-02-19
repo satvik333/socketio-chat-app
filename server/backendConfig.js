@@ -1,5 +1,5 @@
 const configParams = {
-    appEnv: 'http://localhost'
+    appEnv: 'https://node.kapture.cx'
 }
 
 module.exports = configParams;

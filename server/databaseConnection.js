@@ -1,12 +1,12 @@
 const mysql = require('mysql2/promise');
 
 const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'kapture_chat',
+    host: '34.93.70.133',
+    user: 'static_user',
+    password: 'St@t!cU53r2022',
+    database: 'kapture_product_db',
     waitForConnections: true,
-    connectionLimit: 10, // Adjust the connection limit as needed
+    connectionLimit: 100, // Adjust the connection limit as needed
     queueLimit: 0,
   });
 
