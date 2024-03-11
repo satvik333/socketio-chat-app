@@ -19,6 +19,10 @@ const io = socketIO(server, {
   reconnectionDelay: 1000, // Set the delay between attempts (in milliseconds)
 });
 
+app.get('/hi', (req, res) => {
+  res.send('Hello, I am working!');
+});
+
 app.use('/', usersRoute);
 
 let userClientsMap = {};
