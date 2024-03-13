@@ -5,7 +5,12 @@ import React, { useState } from "react";
 import socketIO from "socket.io-client";
 
 function App() {
-  const socket = socketIO.connect("http://172.16.0.132:3001");
+  let socket;
+  try {
+      socket = socketIO.connect("http://node.kapture.cx");
+  } catch (error) {
+      socket = socketIO.connect("http://172.16.0.132:3001");
+  }
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   const handleLogin = (user) => {

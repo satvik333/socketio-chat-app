@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: [`${configParams.appEnv}:3000`, `${configParams.appEnv}:3001`, 'http://172.16.0.132:3000'],
+    origin: [`${configParams.appEnv}:3000`, `${configParams.appEnv}:3001`, 'http://172.16.0.132:3000', 'http://node.kapture.cx:3000', 'http://34.100.171.29:3000', 'http://35.244.38.152:3000'],
     methods: ['GET', 'POST'],
     credentials: true,
   },

@@ -2,7 +2,9 @@ import axios from 'axios';
 import configParams from '../frontendConfig';
 
 // Defined the base API URL
-const baseUrl = `${configParams.appEnv}:3001`;
+let baseUrl = `${configParams.appEnv}`;
+
+if (baseUrl !== 'http://node.kapture.cx')  baseUrl = `${configParams.appEnv}:3001`;
 
 async function getData(route) {
   try {
