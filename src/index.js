@@ -5,6 +5,5 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-console.log("bitbucket prod testing");
 root.render(<App />);
 reportWebVitals();
