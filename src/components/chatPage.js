@@ -4,7 +4,6 @@ import { getUsers, logOutUser } from '../services/chatService';
 import Avatar from 'react-avatar';
 import { useNavigate } from 'react-router-dom';
 import CheckIcon from '@mui/icons-material/Check';
-import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import DoneAllSharpIcon from '@mui/icons-material/DoneAllSharp';
 import Home from './homePage';
 import AppBar from './appBar';
@@ -13,7 +12,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { TypeAnimation } from 'react-type-animation';
 const moment = require('moment');
 
-/* eslint-disable */
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
