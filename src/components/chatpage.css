@@ -106,6 +106,7 @@ ul {
   display: flex;
   flex-direction: column;
   word-wrap: break-word; 
+  width: 80%;
 }
 
 .message-box li {
@@ -133,6 +134,7 @@ ul {
   margin-left: 2%;
   flex-direction: column;
   word-wrap: break-word;
+  width: 80%;
 }
 
 .log-out {
