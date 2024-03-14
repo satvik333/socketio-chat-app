@@ -4,7 +4,6 @@ import { getUsers, logOutUser } from '../services/chatService';
 import Avatar from 'react-avatar';
 import { useNavigate } from 'react-router-dom';
 import CheckIcon from '@mui/icons-material/Check';
-import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import DoneAllSharpIcon from '@mui/icons-material/DoneAllSharp';
 import Home from './homePage';
 import AppBar from './appBar';
@@ -12,6 +11,7 @@ import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { TypeAnimation } from 'react-type-animation';
 const moment = require('moment');
+
 
 function ChatPage({ loggedInUser, socket }) {
   const storedUser = JSON.parse(localStorage.getItem('accountUser'));
@@ -270,7 +270,7 @@ function ChatPage({ loggedInUser, socket }) {
     <AppBar loggedInUser={accountUser}/>
     <div className="App">
       <div className="UsersList">
-        <h3 style={{ marginLeft: '130px', textDecoration: 'underline' }}>Users</h3>
+        <h3 className="lists">Users</h3>
         <ul>
           {usersArray.map((user, index) => (
             <li onClick={() => selectUser(user)} key={index} className={user?.id === toUser?.id ? 'selected' : 'chat-list'}>
@@ -279,7 +279,7 @@ function ChatPage({ loggedInUser, socket }) {
             </li>
           ))}
         </ul>
-        <h3 style={{ marginLeft: '130px', textDecoration: 'underline' }}>Groups</h3>
+        <h3 className="lists">Groups</h3>
         <ul style={{marginBottom: '50px'}}>
           {usersGroup.map((group, index) => (
             <li onClick={() => selectGroup(group)} key={index} className={toGroupName === group?.name ? 'selected' : 'chat-list'}>
@@ -303,20 +303,32 @@ function ChatPage({ loggedInUser, socket }) {
         <ul className="message-box" ref={messagesRef}>
           {messages &&
             messages.map((msg, index) => (
-              <React.Fragment key={index}>
-                <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
-                  <div>
-                    {canDisplayName(msg) ? <strong style={{display: 'block'}}>{msg?.user_name}:</strong> : null}
-                    <span>{msg?.message}</span>
-                    {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon className='status-icons' />}
-                    {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneOutlineIcon className='status-icons' /> : null}
-                    {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon className='status-icons' /> : null}
-                  </div>
-                </li>
+              <div key={index}>
+                <div className='avatar-fix'>
+                  {msg?.from?.id !== accountUser.id && msg?.from_user_id !== accountUser.id && (
+                      <li>
+                        <Avatar
+                          name={toUser?.name}
+                          round={true}
+                          size="30"
+                          textSizeRatio={1.75}
+                        />
+                      </li>
+                  )}
+                  <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'right' : 'left'}>
+                    <div>
+                      {canDisplayName(msg) ? <strong style={{display: 'block'}}>{msg?.user_name}:</strong> : null}
+                      <span>{msg?.message}</span>
+                      {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && !msg.is_delivered && <CheckIcon style={{ fontSize: '20px'}} className='status-icons' />}
+                      {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && !msg.is_seen) ? <DoneAllSharpIcon style={{ fontSize: '20px'}} className='status-icons' /> : null}
+                      {(msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id) && (msg.is_delivered && msg.is_seen) ? <DoneAllSharpIcon style={{ fontSize: '20px'}} className='status-icons-1' /> : null}
+                    </div>
+                  </li>
+                </div>
                 <li className={msg?.from?.id === accountUser.id || msg?.from_user_id === accountUser.id ? 'sender-date' : 'receiver-date'}>
                   <span>{moment(msg?.timestamp).format('DD MMM YYYY H:mm')}</span>
                 </li>
-              </React.Fragment>
+              </div>
             ))}
         </ul>
         <form onSubmit={handleSendMessage}>
@@ -336,7 +348,7 @@ function ChatPage({ loggedInUser, socket }) {
               onBlur={stopTyping}
               className="chat-input"
             />
-            <button className="send-button" type="submit"> <SendTwoToneIcon style={{ fontSize: 25, color: 'black' }}/></button>
+            <button className="send-button" type="submit"> <SendTwoToneIcon className={inputMessage ? 'snd-icon1' : 'snd-icon'}/></button>
           </div>
         </form>
       </div>}
